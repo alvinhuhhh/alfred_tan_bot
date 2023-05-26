@@ -12,13 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: supabase/setup-cli@v1
-      - run: supabase functions deploy --no-verify-jwt --project-ref=${{ secrets.SUPABASE_PROJECT_REF }} alfred_bot_dev
+      - run: supabase functions deploy --no-verify-jwt --project-ref=${{ secrets.SUPABASE_PROJECT_REF_DEV }} alfred_bot
 
   setWebhook:
     runs-on: ubuntu-latest
 
     env:
-      URL: https://api.telegram.org/bot${{ secrets.DEV_BOT_TOKEN }}/setWebhook?url=https://${{ secrets.SUPABASE_PROJECT_REF }}.functions.supabase.co/alfred_bot_dev?secret=${{ secrets.DEV_BOT_TOKEN }}
+      URL: https://api.telegram.org/bot${{ secrets.DEV_BOT_TOKEN }}/setWebhook?url=https://${{ secrets.SUPABASE_PROJECT_REF_DEV }}.functions.supabase.co/alfred_bot?secret=${{ secrets.DEV_BOT_TOKEN }}
 
     steps:
       - run: curl ${{ env.URL }}
