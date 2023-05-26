@@ -4,9 +4,9 @@ Alfred is a Telegram bot that handles administrative duties for my family.
 
 ## Key Features
 
-- Car booking
+- Dinner attendance
 
-- Attending dinner
+- Car usage booking
 
 - Government voucher tracker
 
@@ -22,5 +22,3 @@ Alfred is a Telegram bot that handles administrative duties for my family.
 ## CI/CD
 
 - [GitHub Actions](https://github.com/features/actions)
-
-## Development Roadmap
