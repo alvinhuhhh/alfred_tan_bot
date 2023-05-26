@@ -3,7 +3,7 @@ import {
   Bot,
   webhookCallback,
 } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
-import { createClient } from "https://deno.land/x/supabase@1.3.1/mod.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // Create an instance of the Bot class and pass your bot token to it
 const token = Deno.env.get("BOT_TOKEN");
@@ -25,7 +25,7 @@ bot.command("users", async (ctx) => {
     Deno.env.get("SUPABASE_ANON_KEY") ?? ""
   );
 
-  const { data, error } = await supabaseClient.from("User").select("*");
+  const { data, error } = await supabaseClient.from("User").select();
   if (error) throw error;
 
   console.log(JSON.stringify(data));
