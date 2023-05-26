@@ -7,14 +7,20 @@ import {
 // Create an instance of the Bot class and pass your bot token to it
 const token = Deno.env.get("DEV_BOT_TOKEN");
 if (!token) throw new Error("DEV_BOT_TOKEN is unset");
-
 const bot = new Bot(token);
 
 // Handle the /start command
-bot.command("start", (ctx) => ctx.reply("Welcome! Up and running."));
+bot.command("start", (ctx) => ctx.reply("Welcome! I am up and running!"));
 
-// Handle other messages
-bot.on("message", (ctx) => ctx.reply("Got another message!"));
+// Handle the /hello command
+bot.command("hello", (ctx) =>
+  ctx.reply("Hello there! What can I do for you today?")
+);
+
+// Handle the /users command
+bot.command("users", (ctx) => {
+  ctx.reply("Get users");
+});
 
 const handleUpdate = webhookCallback(bot, "std/http");
 
