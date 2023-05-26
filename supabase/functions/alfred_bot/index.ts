@@ -38,9 +38,14 @@ bot.use(conversations());
 // Define the conversation
 async function addUser(conversation: MyConversation, ctx: MyContext) {
   await ctx.reply("What is the name of the user?");
-  const name = await conversation.waitFor(":text");
-  console.log(name);
-  await ctx.reply("Nice!");
+  const userMsg = await conversation.waitFor(":text");
+  console.log(userMsg.update.message?.text);
+  if (userMsg.update.message?.text)
+    await User.insertUser(userMsg.update.message?.text);
+  const data = await User.getUsers();
+  const users = data.map((entry) => entry["name"]);
+
+  ctx.reply(`Nice! Here are the registered users: ${JSON.stringify(users)}`);
 }
 bot.use(createConversation(addUser));
 
