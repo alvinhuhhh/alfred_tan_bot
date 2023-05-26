@@ -3,7 +3,9 @@ import {
   Bot,
   webhookCallback,
 } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
-import Users from "./users.ts";
+
+import User from "./service/users.ts";
+import CarBooking from "./service/bookings.ts";
 
 // Create an instance of the Bot class and pass your bot token to it
 const token = Deno.env.get("BOT_TOKEN");
@@ -20,33 +22,22 @@ bot.command("hello", (ctx) =>
 
 // Handle hearing his own name
 bot.hears(/alfred/i, (ctx) => {
-  ctx.reply("I heard my name!");
+  ctx.reply("How can I help?");
 });
 
-// Handle the /users command
-bot.command("users", async (ctx) => {
-  const data = await Users.getUsers();
-  const usernames = data.map((entry) => entry["name"]);
+// Handle the /getusers command
+bot.command("getusers", async (ctx) => {
+  const data = await User.getUsers();
+  const users = data.map((entry) => entry["name"]);
 
-  ctx.reply(`Here are the registered users: ${JSON.stringify(usernames)}`);
+  ctx.reply(`Here are the registered users: ${JSON.stringify(users)}`);
 });
 
-// Handle the /insert command
-bot.command("insert", async (ctx) => {
-  await Users.insertUser("testUser1");
-  const data = await Users.getUsers();
-  const usernames = data.map((entry) => entry["name"]);
-
-  ctx.reply(`Here are the registered users: ${JSON.stringify(usernames)}`);
-});
-
-// Handle the /update command
-bot.command("update", async (ctx) => {
-  await Users.updateUser(1, "albert");
-  const data = await Users.getUsers();
-  const usernames = data.map((entry) => entry["name"]);
-
-  ctx.reply(`Here are the registered users: ${JSON.stringify(usernames)}`);
+// Handle the /adduser command
+bot.command("adduser", async (ctx) => {
+  await ctx.reply("What is the name of the user?", {
+    reply_markup: { force_reply: true },
+  });
 });
 
 const handleUpdate = webhookCallback(bot, "std/http");
