@@ -27,7 +27,24 @@ bot.hears(/alfred/i, (ctx) => {
 bot.command("users", async (ctx) => {
   const data = await Users.getUsers();
   const usernames = data.map((entry) => entry["name"]);
-  console.log(usernames);
+
+  ctx.reply(`Here are the registered users: ${JSON.stringify(usernames)}`);
+});
+
+// Handle the /insert command
+bot.command("insert", async (ctx) => {
+  await Users.insertUser("testUser1");
+  const data = await Users.getUsers();
+  const usernames = data.map((entry) => entry["name"]);
+
+  ctx.reply(`Here are the registered users: ${JSON.stringify(usernames)}`);
+});
+
+// Handle the /update command
+bot.command("update", async (ctx) => {
+  await Users.updateUser(1, "albert");
+  const data = await Users.getUsers();
+  const usernames = data.map((entry) => entry["name"]);
 
   ctx.reply(`Here are the registered users: ${JSON.stringify(usernames)}`);
 });
