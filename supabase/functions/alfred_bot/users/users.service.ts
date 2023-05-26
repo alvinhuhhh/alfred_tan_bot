@@ -19,10 +19,12 @@ export default class UsersService {
     const users = data.map((entry) => entry["name"]);
 
     ctx.reply(`Nice! Here are the registered users: ${JSON.stringify(users)}`);
+    return;
   }
 
   public static async updateUser(conversation: MyConversation, ctx: MyContext) {
     ctx.reply("Coming soon!");
+    return;
   }
 
   public static async deleteUser(conversation: MyConversation, ctx: MyContext) {
@@ -42,6 +44,7 @@ export default class UsersService {
       ctx.reply(
         `Nice! Here are the registered users: ${JSON.stringify(users)}`
       );
+      return;
     }
   }
 }
