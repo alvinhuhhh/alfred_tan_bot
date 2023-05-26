@@ -5,8 +5,8 @@ import {
 } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
 
 // Create an instance of the Bot class and pass your bot token to it
-const token = Deno.env.get("BOT_TOKEN");
-if (!token) throw new Error("BOT_TOKEN is unset");
+const token = Deno.env.get("DEV_BOT_TOKEN");
+if (!token) throw new Error("DEV_BOT_TOKEN is unset");
 
 const bot = new Bot(token);
 
