@@ -3,7 +3,7 @@ import {
   Bot,
   webhookCallback,
 } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
-import client from "./db.ts";
+import db from "./db.ts";
 
 // Create an instance of the Bot class and pass your bot token to it
 const token = Deno.env.get("BOT_TOKEN");
@@ -20,7 +20,7 @@ bot.command("hello", (ctx) =>
 
 // Handle the /users command
 bot.command("users", async (ctx) => {
-  const users = await client.queryArray("select * from User");
+  const users = await db.queryArray("select * from User");
   console.log(users);
 
   ctx.reply("Get users");
