@@ -3,8 +3,7 @@ import {
   Bot,
   webhookCallback,
 } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
-import db from "./db.ts";
-import { QueryArrayResult } from "https://deno.land/x/postgres@v0.17.0/query/query.ts";
+import { createClient } from "https://deno.land/x/supabase@1.3.1/mod.ts";
 
 // Create an instance of the Bot class and pass your bot token to it
 const token = Deno.env.get("BOT_TOKEN");
@@ -21,8 +20,15 @@ bot.command("hello", (ctx) =>
 
 // Handle the /users command
 bot.command("users", async (ctx) => {
-  const users: QueryArrayResult = await db.queryArray("select * from User");
-  console.log(JSON.stringify(users.rows));
+  const supabaseClient = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+  );
+
+  const { data, error } = await supabaseClient.from("User").select("*");
+  if (error) throw error;
+
+  console.log(JSON.stringify(data));
 
   ctx.reply("Get users");
 });
