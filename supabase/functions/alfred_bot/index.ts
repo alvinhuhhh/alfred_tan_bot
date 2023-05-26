@@ -18,6 +18,11 @@ bot.command("hello", (ctx) =>
   ctx.reply("Hello there! What can I do for you today?")
 );
 
+// Handle hearing his own name
+bot.hears(/alfred/i, (ctx) => {
+  ctx.reply("I heard my name!");
+});
+
 // Handle the /users command
 bot.command("users", async (ctx) => {
   const data = await Users.getUsers();
