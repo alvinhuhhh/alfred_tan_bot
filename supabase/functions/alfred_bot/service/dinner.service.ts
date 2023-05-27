@@ -31,12 +31,14 @@ Attendees:
       parse_mode: "HTML",
       reply_markup: this.joinLeaveDinnerButton,
     });
+    return;
   }
 
   private static replyDinnerNotFound(ctx: MyContext) {
     ctx.reply("Dinner not started for tonight. Start one now?", {
       reply_markup: this.startDinnerButton,
     });
+    return;
   }
 
   public static async getDinner(ctx: MyContext): Promise<void> {
@@ -47,8 +49,6 @@ Attendees:
     } else {
       this.replyDinnerNotFound(ctx);
     }
-
-    return;
   }
 
   public static async startDinner(ctx: MyContext): Promise<void> {
@@ -57,8 +57,6 @@ Attendees:
     const data = await DinnerRepository.insertDinner(new Date(), name);
 
     this.replyDinnerDetails(ctx, data);
-
-    return;
   }
 
   public static async joinDinner(ctx: MyContext): Promise<void> {
@@ -77,8 +75,6 @@ Attendees:
     } else {
       this.replyDinnerNotFound(ctx);
     }
-
-    return;
   }
 
   public static async leaveDinner(ctx: MyContext): Promise<void> {
@@ -102,15 +98,12 @@ Attendees:
     } else {
       this.replyDinnerNotFound(ctx);
     }
-
-    return;
   }
 
   public static async endDinner(ctx: MyContext): Promise<void> {
     await DinnerRepository.deleteDinner(new Date());
 
     ctx.reply("No more dinner for tonight!");
-
     return;
   }
 }
