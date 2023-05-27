@@ -7,7 +7,7 @@ export default class DinnerService {
     "start-dinner-callback"
   );
 
-  static joinDinnerButton = new InlineKeyboard()
+  static joinLeaveDinnerButton = new InlineKeyboard()
     .text("Join Dinner", "join-dinner-callback")
     .text("Leave Dinner", "leave-dinner-callback");
 
@@ -27,7 +27,10 @@ Date: ${formattedDate}
 Attendees:
 ` + attendees;
 
-    ctx.reply(text, { parse_mode: "HTML" });
+    ctx.reply(text, {
+      parse_mode: "HTML",
+      reply_markup: this.joinLeaveDinnerButton,
+    });
   }
 
   private static replyDinnerNotFound(ctx: MyContext) {

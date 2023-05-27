@@ -1,0 +1,9 @@
+## Command list
+
+start - Start Alfred
+hello - Say hi to Alfred
+getdinner - Get tonight's dinner details
+startdinner - Start tonight's dinner attendance
+joindinner - Join tonight's dinner
+leavedinner - Leave tonight's dinner
+enddinner - Cancel tonight's dinner
