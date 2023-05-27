@@ -1,11 +1,18 @@
 import DinnerRepository from "../repository/dinner.repository.ts";
 
 export default class DinnerService {
+  private static dinnerDetails(data: any) {
+    return `
+      <b>Dinner tonight:</b><br/>
+      <b>Date: ${data.date}</b>
+    `;
+  }
+
   public static async getDinner(ctx: MyContext): Promise<void> {
     const data = await DinnerRepository.getDinnerByDate(new Date());
 
     if (data) {
-      ctx.reply(`Dinner tonight: ${JSON.stringify(data)}`);
+      ctx.reply(this.dinnerDetails(data), { parse_mode: "HTML" });
     } else {
       ctx.reply("Dinner not started for tonight. Start one now?");
     }
