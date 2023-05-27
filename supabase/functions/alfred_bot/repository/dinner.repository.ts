@@ -2,14 +2,14 @@ import db from "./db.repository.ts";
 
 export default class DinnerRepository {
   public static async getDinnerByDate(date: Date) {
-    const query = await db
-      .from("dinner")
-      .select()
-      .eq("date", date.toISOString().split("T")[0]);
+    const ISODate = date.toISOString().split("T")[0];
+    console.log(ISODate);
+
+    const query = await db.from("dinner").select().eq("date", ISODate);
     if (query.error) throw query.error;
 
     if (query.count) return query.data;
-    return null;
+    else return null;
   }
 
   public static async insertDinner(date: Date, name: string) {
