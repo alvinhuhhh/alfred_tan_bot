@@ -3,7 +3,7 @@ import DinnerRepository from "../repository/dinner.repository.ts";
 export default class DinnerService {
   private static dinnerDetails(data: any) {
     return `
-      <b>Dinner tonight:</b><br/>
+      <b>Dinner tonight:</b>%0A
       <b>Date: ${data.date}</b>
     `;
   }
