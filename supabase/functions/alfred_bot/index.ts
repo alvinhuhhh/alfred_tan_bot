@@ -79,7 +79,7 @@ bot.command("startdinner", async (ctx) => {
   await DinnerService.startDinner(ctx);
 });
 bot.callbackQuery("start-dinner-callback", async (ctx) => {
-  await ctx.reply("Start dinner");
+  await DinnerService.startDinner(ctx);
 });
 
 // Handle the /joindinner command
@@ -87,9 +87,7 @@ bot.command("joindinner", async (ctx) => {
   await DinnerService.joinDinner(ctx);
 });
 bot.callbackQuery("join-dinner-callback", async (ctx) => {
-  await ctx.answerCallbackQuery({
-    text: "Join dinner",
-  });
+  await DinnerService.joinDinner(ctx);
 });
 
 // Handle the /leavedinner command
@@ -97,9 +95,7 @@ bot.command("leavedinner", async (ctx) => {
   await DinnerService.leaveDinner(ctx);
 });
 bot.callbackQuery("leave-dinner-callback", async (ctx) => {
-  await ctx.answerCallbackQuery({
-    text: "Leave dinner",
-  });
+  await DinnerService.leaveDinner(ctx);
 });
 
 // Handle the /enddinner command
