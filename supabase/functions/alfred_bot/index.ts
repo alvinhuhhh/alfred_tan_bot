@@ -37,11 +37,11 @@ bot.use(createConversation(UsersService.updateUser));
 bot.use(createConversation(UsersService.deleteUser));
 
 // Basic commands
-bot.hears(/alfred/i, (ctx) => {
-  ctx.reply("How can I help?", {
-    reply_to_message_id: ctx.msg.message_id,
-  });
-});
+// bot.hears(/alfred/i, (ctx) => {
+//   ctx.reply("How can I help?", {
+//     reply_to_message_id: ctx.msg.message_id,
+//   });
+// });
 
 bot.command("start", (ctx) => ctx.reply("Welcome! I am up and running!"));
 
