@@ -1,7 +1,7 @@
 import DinnerRepository from "../repository/dinner.repository.ts";
 
 export default class DinnerService {
-  public static async getDinner(ctx: MyContext) {
+  public static async getDinner(ctx: MyContext): Promise<void> {
     const data = await DinnerRepository.getDinnerByDate(new Date());
 
     if (data) {
@@ -11,26 +11,25 @@ export default class DinnerService {
     }
   }
 
-  public static async startDinner(ctx: MyContext) {
-    const name = ctx.from?.first_name ?? "";
+  public static async startDinner(ctx: MyContext): Promise<void> {
+    const name: string = ctx.from?.first_name ?? "";
 
     const data = await DinnerRepository.insertDinner(new Date(), name);
 
     ctx.reply(`Dinner tonight: ${JSON.stringify(data)}`);
   }
 
-  public static async joinDinner(ctx: MyContext) {
-    const name = ctx.from?.first_name ?? "";
+  public static async joinDinner(ctx: MyContext): Promise<void> {
+    const name: string = ctx.from?.first_name ?? "";
 
     const existingDinner = await DinnerRepository.getDinnerByDate(new Date());
     if (existingDinner) {
       let result;
-      const existingAttendees = existingDinner["attendees"];
-      console.log(`[joinDinner] Existing attendees: ${existingAttendees}`);
+      const attendees: Array<string> = existingDinner.attendees;
 
-      if (!existingAttendees.includes(name)) {
-        const newAttendees = existingAttendees.push(name);
-        result = await DinnerRepository.updateDinner(new Date(), newAttendees);
+      if (!attendees.includes(name)) {
+        attendees.push(name);
+        result = await DinnerRepository.updateDinner(new Date(), attendees);
       }
       ctx.reply(`Dinner tonight: ${JSON.stringify(result)}`);
     } else {
@@ -38,18 +37,20 @@ export default class DinnerService {
     }
   }
 
-  public static async leaveDinner(ctx: MyContext) {
-    const name = ctx.from?.first_name ?? "";
+  public static async leaveDinner(ctx: MyContext): Promise<void> {
+    const name: string = ctx.from?.first_name ?? "";
 
     const existingDinner = await DinnerRepository.getDinnerByDate(new Date());
     if (existingDinner) {
       let result;
-      const existingAttendees = existingDinner["attendees"];
+      const existingAttendees: Array<string> = existingDinner["attendees"];
 
       if (existingAttendees.includes(name)) {
-        const newAttendees = existingAttendees.filter((attendee: string) => {
-          return attendee != name;
-        });
+        const newAttendees: Array<string> = existingAttendees.filter(
+          (attendee: string) => {
+            return attendee != name;
+          }
+        );
 
         result = await DinnerRepository.updateDinner(new Date(), newAttendees);
       }
@@ -59,7 +60,7 @@ export default class DinnerService {
     }
   }
 
-  public static async endDinner(ctx: MyContext) {
+  public static async endDinner(ctx: MyContext): Promise<void> {
     await DinnerRepository.deleteDinner(new Date());
 
     ctx.reply("No more dinner for tonight!");

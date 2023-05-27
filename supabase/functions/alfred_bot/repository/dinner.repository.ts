@@ -2,7 +2,7 @@ import db from "./db.repository.ts";
 
 export default class DinnerRepository {
   public static async getDinnerByDate(date: Date) {
-    const ISODate = date.toISOString().split("T")[0];
+    const ISODate: string = date.toISOString().split("T")[0];
 
     const query = await db.from("dinner").select().eq("date", ISODate);
     if (query.error) throw query.error;
@@ -44,7 +44,7 @@ export default class DinnerRepository {
     const data = await this.getDinnerByDate(date);
 
     if (data) {
-      const dinnerId = data.id;
+      const dinnerId: number = data.id;
 
       const result = await db
         .from("dinner")
@@ -71,7 +71,7 @@ export default class DinnerRepository {
   }
 
   public static async deleteDinner(date: Date) {
-    const ISODate = date.toISOString().split("T")[0];
+    const ISODate: string = date.toISOString().split("T")[0];
 
     // check if dinner already exists
     const data = await this.getDinnerByDate(date);
