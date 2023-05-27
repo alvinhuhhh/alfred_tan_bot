@@ -79,6 +79,11 @@ bot.command("startdinner", async (ctx) => {
   await DinnerService.startDinner(ctx);
 });
 
+// Handle the /joindinner command
+bot.command("joindinner", async (ctx) => {
+  await DinnerService.joinDinner(ctx);
+});
+
 const handleUpdate = webhookCallback(bot, "std/http");
 
 serve(async (req: Request) => {

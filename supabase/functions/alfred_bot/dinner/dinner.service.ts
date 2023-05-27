@@ -19,6 +19,15 @@ export default class DinnerService {
 
     const data = await DinnerRepository.insertDinner(date, name);
 
-    ctx.reply(`Great, dinner is started: ${JSON.stringify(data)}`);
+    ctx.reply(`Dinner tonight: ${JSON.stringify(data)}`);
+  }
+
+  public static async joinDinner(ctx: MyContext) {
+    const date = new Date().toLocaleDateString();
+    const name = ctx.from?.first_name ?? "";
+
+    const data = await DinnerRepository.updateDinner(date, name);
+
+    ctx.reply(`Dinner tonight: ${JSON.stringify(data)}`);
   }
 }
