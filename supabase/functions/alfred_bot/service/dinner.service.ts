@@ -1,26 +1,28 @@
 import DinnerRepository from "../repository/dinner.repository.ts";
 
 export default class DinnerService {
-  private static dinnerDetails(ctx: MyContext, data: any) {
+  private static replyDinnerDetails(ctx: MyContext, data: any) {
     const text = `
-    *Dinner tonight:*   
-       
-    Date: ${data.date}   
-       
-    Attendees:   
+    <b>Dinner tonight:</b>
+    Date: ${data.date}
+    Attendees:
     ${data.attendees}
     `;
 
-    ctx.reply(text, { parse_mode: "MarkdownV2" });
+    ctx.reply(text, { parse_mode: "HTML" });
+  }
+
+  private static replyDinnerNotFound(ctx: MyContext) {
+    ctx.reply("Dinner not started for tonight. Start one now?");
   }
 
   public static async getDinner(ctx: MyContext): Promise<void> {
     const data = await DinnerRepository.getDinnerByDate(new Date());
 
     if (data) {
-      this.dinnerDetails(ctx, data);
+      this.replyDinnerDetails(ctx, data);
     } else {
-      ctx.reply("Dinner not started for tonight. Start one now?");
+      this.replyDinnerNotFound(ctx);
     }
   }
 
@@ -29,7 +31,7 @@ export default class DinnerService {
 
     const data = await DinnerRepository.insertDinner(new Date(), name);
 
-    this.dinnerDetails(ctx, data);
+    this.replyDinnerDetails(ctx, data);
   }
 
   public static async joinDinner(ctx: MyContext): Promise<void> {
@@ -44,9 +46,9 @@ export default class DinnerService {
         attendees.push(name);
         result = await DinnerRepository.updateDinner(new Date(), attendees);
       }
-      this.dinnerDetails(ctx, result);
+      this.replyDinnerDetails(ctx, result);
     } else {
-      ctx.reply("Dinner not started for tonight. Start one now?");
+      this.replyDinnerNotFound(ctx);
     }
   }
 
@@ -67,9 +69,9 @@ export default class DinnerService {
 
         result = await DinnerRepository.updateDinner(new Date(), newAttendees);
       }
-      this.dinnerDetails(ctx, result);
+      this.replyDinnerDetails(ctx, result);
     } else {
-      ctx.reply("Dinner not started for tonight. Start one now?");
+      this.replyDinnerNotFound(ctx);
     }
   }
 
