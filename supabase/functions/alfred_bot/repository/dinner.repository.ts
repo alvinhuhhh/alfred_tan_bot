@@ -3,9 +3,8 @@ import db from "./db.repository.ts";
 export default class DinnerRepository {
   public static async getDinnerByDate(date: Date) {
     const ISODate = date.toISOString().split("T")[0];
-    console.log(ISODate);
 
-    const query = await db.from("dinner").select().eq("date", ISODate);
+    const query = await db.from("dinner").select().gte("date", ISODate);
     if (query.error) throw query.error;
 
     if (query.count) return query.data;
