@@ -26,6 +26,7 @@ export default class DinnerService {
     if (existingDinner) {
       let result;
       const existingAttendees = existingDinner.attendees;
+      console.log(`[joinDinner] Existing attendees: ${existingAttendees}`);
 
       if (!existingAttendees.includes(name)) {
         const newAttendees = existingAttendees.push(name);
