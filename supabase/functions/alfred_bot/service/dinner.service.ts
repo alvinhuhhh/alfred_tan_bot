@@ -29,7 +29,6 @@ Attendees:
 
     ctx.reply(text, {
       parse_mode: "HTML",
-      reply_markup: this.joinLeaveDinnerButton,
     });
   }
 
