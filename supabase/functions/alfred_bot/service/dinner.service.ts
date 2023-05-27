@@ -1,18 +1,22 @@
 import DinnerRepository from "../repository/dinner.repository.ts";
 
 export default class DinnerService {
-  private static dinnerDetails(data: any) {
-    return `
-      <b>Dinner tonight:</b>%0A
-      <b>Date: ${data.date}</b>
+  private static dinnerDetails(ctx: MyContext, data: any) {
+    const text = `
+      <b>Dinner tonight:</b>
+      Date: ${data.date}
+      Attendees:
+      ${data.attendees}
     `;
+
+    ctx.reply(text, { parse_mode: "HTML" });
   }
 
   public static async getDinner(ctx: MyContext): Promise<void> {
     const data = await DinnerRepository.getDinnerByDate(new Date());
 
     if (data) {
-      ctx.reply(this.dinnerDetails(data), { parse_mode: "HTML" });
+      this.dinnerDetails(ctx, data);
     } else {
       ctx.reply("Dinner not started for tonight. Start one now?");
     }
@@ -23,7 +27,7 @@ export default class DinnerService {
 
     const data = await DinnerRepository.insertDinner(new Date(), name);
 
-    ctx.reply(`Dinner tonight: ${JSON.stringify(data)}`);
+    this.dinnerDetails(ctx, data);
   }
 
   public static async joinDinner(ctx: MyContext): Promise<void> {
@@ -38,7 +42,7 @@ export default class DinnerService {
         attendees.push(name);
         result = await DinnerRepository.updateDinner(new Date(), attendees);
       }
-      ctx.reply(`Dinner tonight: ${JSON.stringify(result)}`);
+      this.dinnerDetails(ctx, result);
     } else {
       ctx.reply("Dinner not started for tonight. Start one now?");
     }
@@ -61,7 +65,7 @@ export default class DinnerService {
 
         result = await DinnerRepository.updateDinner(new Date(), newAttendees);
       }
-      ctx.reply(`Dinner tonight: ${JSON.stringify(result)}`);
+      this.dinnerDetails(ctx, result);
     } else {
       ctx.reply("Dinner not started for tonight. Start one now?");
     }
