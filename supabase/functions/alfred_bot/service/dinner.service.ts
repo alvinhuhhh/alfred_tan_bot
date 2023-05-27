@@ -3,13 +3,15 @@ import DinnerRepository from "../repository/dinner.repository.ts";
 export default class DinnerService {
   private static dinnerDetails(ctx: MyContext, data: any) {
     const text = `
-      <b>Dinner tonight:</b>
-      Date: ${data.date}
-      Attendees:
-      ${data.attendees}
+    *Dinner tonight:*   
+       
+    Date: ${data.date}   
+       
+    Attendees:   
+    ${data.attendees}
     `;
 
-    ctx.reply(text, { parse_mode: "HTML" });
+    ctx.reply(text, { parse_mode: "MarkdownV2" });
   }
 
   public static async getDinner(ctx: MyContext): Promise<void> {
