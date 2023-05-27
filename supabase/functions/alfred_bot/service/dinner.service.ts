@@ -1,17 +1,26 @@
+import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 import DinnerRepository from "../repository/dinner.repository.ts";
 
 export default class DinnerService {
+  static startDinnerButton = new InlineKeyboard().text(
+    "Start Dinner",
+    "start-dinner-callback"
+  );
+
   private static replyDinnerDetails(ctx: MyContext, data: any) {
     const formattedDate = data.date.split("-").reverse().join("/");
-    const attendees = data.attendees.map(
-      (attendee: string) => `- ${attendee}
-    `
-    );
+    let attendees = "";
+    for (const attendee in data.attendees) {
+      attendees += `- ${attendee}
+`;
+    }
 
     const text =
       `
 <b>Dinner tonight:</b>
+
 Date: ${formattedDate}
+
 Attendees:
 ` + attendees;
 
@@ -19,7 +28,9 @@ Attendees:
   }
 
   private static replyDinnerNotFound(ctx: MyContext) {
-    ctx.reply("Dinner not started for tonight. Start one now?");
+    ctx.reply("Dinner not started for tonight. Start one now?", {
+      reply_markup: this.startDinnerButton,
+    });
   }
 
   public static async getDinner(ctx: MyContext): Promise<void> {

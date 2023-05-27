@@ -78,6 +78,9 @@ bot.command("getdinner", async (ctx) => {
 bot.command("startdinner", async (ctx) => {
   await DinnerService.startDinner(ctx);
 });
+bot.callbackQuery("start-dinner-callback", async (ctx) => {
+  await DinnerService.startDinner(ctx);
+});
 
 // Handle the /joindinner command
 bot.command("joindinner", async (ctx) => {
