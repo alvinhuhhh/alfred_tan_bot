@@ -1,14 +1,17 @@
 import UsersRepository from "../repository/users.repository.ts";
 
 export default class UsersService {
-  public static async getUsers(ctx: MyContext) {
-    const data = await UsersRepository.getUsers();
-    const users = data.map((entry) => entry["name"]);
+  public static async getAllUsers(ctx: MyContext): Promise<void> {
+    const data = await UsersRepository.getAllUsers();
+    const users: Array<string> = data.map((entry) => entry.name);
 
     ctx.reply(`Here are the list of users: ${JSON.stringify(users)}`);
   }
 
-  public static async addUser(conversation: MyConversation, ctx: MyContext) {
+  public static async addUser(
+    conversation: MyConversation,
+    ctx: MyContext
+  ): Promise<void> {
     await ctx.reply("What is the name of the user?");
     const userMsg = await conversation.waitFor(":text");
 
@@ -16,27 +19,34 @@ export default class UsersService {
       await UsersRepository.insertUser(userMsg.update.message?.text);
     }
 
-    this.getUsers(ctx);
+    this.getAllUsers(ctx);
     return;
   }
 
-  public static async updateUser(conversation: MyConversation, ctx: MyContext) {
+  public static async updateUser(
+    conversation: MyConversation,
+    ctx: MyContext
+  ): Promise<void> {
     ctx.reply("Coming soon!");
     return;
   }
 
-  public static async deleteUser(conversation: MyConversation, ctx: MyContext) {
+  public static async deleteUser(
+    conversation: MyConversation,
+    ctx: MyContext
+  ): Promise<void> {
     await ctx.reply("What is the name of the user to be deleted?");
     const userMsg = await conversation.waitFor(":text");
 
     if (userMsg.update.message?.text) {
-      const userId = await UsersRepository.getUserByName(
+      const user = await UsersRepository.getUserByName(
         userMsg.update.message.text
       );
-      if (userId[0].id) await UsersRepository.deleteUser(userId[0].id);
+
+      if (user?.id) await UsersRepository.deleteUser(user.id);
       else ctx.reply("Couldn't find a user with that name");
 
-      this.getUsers(ctx);
+      this.getAllUsers(ctx);
       return;
     }
   }

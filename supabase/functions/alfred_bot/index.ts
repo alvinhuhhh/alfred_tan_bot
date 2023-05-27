@@ -51,7 +51,7 @@ bot.command("hello", (ctx) =>
 
 // Handle the /getusers command
 bot.command("getusers", async (ctx) => {
-  await UsersService.getUsers(ctx);
+  await UsersService.getAllUsers(ctx);
 });
 
 // Handle the /adduser command
