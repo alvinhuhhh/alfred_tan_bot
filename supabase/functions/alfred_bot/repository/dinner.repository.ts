@@ -4,11 +4,18 @@ export default class DinnerRepository {
   public static async getDinnerByDate(date: Date) {
     const ISODate = date.toISOString().split("T")[0];
 
-    const query = await db.from("dinner").select().gte("date", ISODate);
+    const query = await db.from("dinner").select().eq("date", ISODate);
     if (query.error) throw query.error;
 
-    if (query.count) return query.data;
-    else return null;
+    if (query.data?.length) {
+      console.log(`[getDinnerByDate] ${JSON.stringify(query.data)}`);
+      return query.data;
+    } else {
+      console.log(
+        `[getDinnerByDate] dinner does not exist for date: ${ISODate}`
+      );
+      return null;
+    }
   }
 
   public static async insertDinner(date: Date, name: string) {
@@ -22,8 +29,10 @@ export default class DinnerRepository {
         .select();
       if (result.error) throw result.error;
 
+      console.log(`[insertDinner] new dinner created`);
       return result.data;
     } else {
+      console.log(`[insertDinner] dinner already exists`);
       return data;
     }
   }
@@ -45,8 +54,18 @@ export default class DinnerRepository {
         .select();
       if (result.error) throw result.error;
 
+      console.log(
+        `[updateDinner] dinner updated for date: ${
+          date.toISOString().split("T")[0]
+        }`
+      );
       return result.data;
     } else {
+      console.log(
+        `[updateDinner] dinner does not exist for date: ${
+          date.toISOString().split("T")[0]
+        }`
+      );
       return null;
     }
   }
@@ -58,6 +77,12 @@ export default class DinnerRepository {
     if (data) {
       const result = await db.from("dinner").delete().eq("date", date);
       if (result.error) throw result.error;
+
+      console.log(
+        `[deleteDinner] dinner deleted for date: ${
+          date.toISOString().split("T")[0]
+        }`
+      );
     }
   }
 }
