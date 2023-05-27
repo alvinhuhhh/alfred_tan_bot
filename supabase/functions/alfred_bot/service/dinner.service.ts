@@ -7,10 +7,14 @@ export default class DinnerService {
     "start-dinner-callback"
   );
 
+  static joinDinnerButton = new InlineKeyboard()
+    .text("Join Dinner", "join-dinner-callback")
+    .text("Leave Dinner", "leave-dinner-callback");
+
   private static replyDinnerDetails(ctx: MyContext, data: any) {
     const formattedDate = data.date.split("-").reverse().join("/");
     let attendees = "";
-    for (const attendee in data.attendees) {
+    for (const attendee of data.attendees) {
       attendees += `- ${attendee}
 `;
     }
@@ -18,7 +22,6 @@ export default class DinnerService {
     const text =
       `
 <b>Dinner tonight:</b>
-
 Date: ${formattedDate}
 
 Attendees:

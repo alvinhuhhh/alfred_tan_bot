@@ -86,9 +86,15 @@ bot.callbackQuery("start-dinner-callback", async (ctx) => {
 bot.command("joindinner", async (ctx) => {
   await DinnerService.joinDinner(ctx);
 });
+bot.callbackQuery("join-dinner-callback", async (ctx) => {
+  await DinnerService.joinDinner(ctx);
+});
 
 // Handle the /leavedinner command
 bot.command("leavedinner", async (ctx) => {
+  await DinnerService.leaveDinner(ctx);
+});
+bot.callbackQuery("leave-dinner-callback", async (ctx) => {
   await DinnerService.leaveDinner(ctx);
 });
 
