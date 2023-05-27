@@ -10,8 +10,8 @@ import {
 } from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
 
 // Import services
-import UsersService from "./users/users.service.ts";
-import DinnerService from "./dinner/dinner.service.ts";
+import UsersService from "./service/users.service.ts";
+import DinnerService from "./service/dinner.service.ts";
 
 // Create an instance of the Bot class
 const token = Deno.env.get("BOT_TOKEN");
@@ -82,6 +82,16 @@ bot.command("startdinner", async (ctx) => {
 // Handle the /joindinner command
 bot.command("joindinner", async (ctx) => {
   await DinnerService.joinDinner(ctx);
+});
+
+// Handle the /leavedinner command
+bot.command("leavedinner", async (ctx) => {
+  await DinnerService.leaveDinner(ctx);
+});
+
+// Handle the /enddinner command
+bot.command("enddinner", async (ctx) => {
+  await DinnerService.endDinner(ctx);
 });
 
 const handleUpdate = webhookCallback(bot, "std/http");

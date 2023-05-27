@@ -37,19 +37,16 @@ export default class DinnerRepository {
     }
   }
 
-  public static async updateDinner(date: Date, name: string) {
+  public static async updateDinner(date: Date, attendees: Array<string>) {
     // check if dinner already exists
     const data = await this.getDinnerByDate(date);
 
     if (data) {
       const dinnerId = data[0].id;
-      const existingAttendees = data[0].attendees;
-      const newAttendees = existingAttendees;
-      if (!existingAttendees.includes(name)) newAttendees.push(name);
 
       const result = await db
         .from("dinner")
-        .update({ attendees: newAttendees })
+        .update({ attendees: attendees })
         .eq("id", dinnerId)
         .select();
       if (result.error) throw result.error;
@@ -71,18 +68,16 @@ export default class DinnerRepository {
   }
 
   public static async deleteDinner(date: Date) {
+    const ISODate = date.toISOString().split("T")[0];
+
     // check if dinner already exists
     const data = await this.getDinnerByDate(date);
 
     if (data) {
-      const result = await db.from("dinner").delete().eq("date", date);
+      const result = await db.from("dinner").delete().eq("date", ISODate);
       if (result.error) throw result.error;
 
-      console.log(
-        `[deleteDinner] dinner deleted for date: ${
-          date.toISOString().split("T")[0]
-        }`
-      );
+      console.log(`[deleteDinner] dinner deleted for date: ${ISODate}`);
     }
   }
 }
