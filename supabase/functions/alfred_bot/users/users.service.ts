@@ -12,13 +12,11 @@ export default class UsersService {
     await ctx.reply("What is the name of the user?");
     const userMsg = await conversation.waitFor(":text");
 
-    if (userMsg.update.message?.text)
+    if (userMsg.update.message?.text) {
       await UsersRepository.insertUser(userMsg.update.message?.text);
+    }
 
-    const data = await UsersRepository.getUsers();
-    const users = data.map((entry) => entry["name"]);
-
-    ctx.reply(`Nice! Here are the registered users: ${JSON.stringify(users)}`);
+    this.getUsers(ctx);
     return;
   }
 
@@ -38,12 +36,7 @@ export default class UsersService {
       if (userId[0].id) await UsersRepository.deleteUser(userId[0].id);
       else ctx.reply("Couldn't find a user with that name");
 
-      const data = await UsersRepository.getUsers();
-      const users = data.map((entry) => entry["name"]);
-
-      ctx.reply(
-        `Nice! Here are the registered users: ${JSON.stringify(users)}`
-      );
+      this.getUsers(ctx);
       return;
     }
   }

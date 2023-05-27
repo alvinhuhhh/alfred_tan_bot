@@ -11,6 +11,7 @@ import {
 
 // Import services
 import UsersService from "./users/users.service.ts";
+import DinnerService from "./dinner/dinner.service.ts";
 
 // Create an instance of the Bot class
 const token = Deno.env.get("BOT_TOKEN");
@@ -66,6 +67,11 @@ bot.command("updateuser", async (ctx) => {
 // Handle the /deleteuser command
 bot.command("deleteuser", async (ctx) => {
   await ctx.conversation.enter("deleteUser");
+});
+
+// Handle the /startdinner command
+bot.command("startdinner", async (ctx) => {
+  await DinnerService.startDinner(ctx);
 });
 
 const handleUpdate = webhookCallback(bot, "std/http");

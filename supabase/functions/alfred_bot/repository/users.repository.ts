@@ -19,20 +19,35 @@ export default class UsersRepository {
   }
 
   public static async insertUser(name: string) {
-    const { error } = await db.from("users").insert({ name: name }).select();
-    if (error) throw error;
+    // check if user already exists
+    const { data } = await db.from("users").select("name").eq("name", name);
+
+    if (!data) {
+      const { error } = await db.from("users").insert({ name: name });
+      if (error) throw error;
+    }
   }
 
-  public static async updateUser(id: number, name: string) {
-    const { error } = await db
-      .from("users")
-      .update({ name: name })
-      .eq("id", id);
-    if (error) throw error;
+  public static async updateUser(id: number, newName: string) {
+    // check if user exists
+    const { data } = await db.from("users").select().eq("id", id);
+
+    if (data) {
+      const { error } = await db
+        .from("users")
+        .update({ name: newName })
+        .eq("id", id);
+      if (error) throw error;
+    }
   }
 
   public static async deleteUser(id: number) {
-    const { error } = await db.from("users").delete().eq("id", id);
-    if (error) throw error;
+    // check if user exists
+    const { data } = await db.from("users").select().eq("id", id);
+
+    if (data) {
+      const { error } = await db.from("users").delete().eq("id", id);
+      if (error) throw error;
+    }
   }
 }
