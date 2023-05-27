@@ -31,6 +31,7 @@ export default class DinnerRepository {
       if (result.error) throw result.error;
 
       const queryData = result.data[0];
+      console.log(JSON.stringify(queryData));
       console.log(`[insertDinner] new dinner created`);
       return queryData;
     } else {
@@ -54,6 +55,8 @@ export default class DinnerRepository {
       if (result.error) throw result.error;
 
       const queryData = result.data[0];
+      console.log(JSON.stringify(queryData));
+
       console.log(
         `[updateDinner] dinner updated for date: ${
           date.toISOString().split("T")[0]

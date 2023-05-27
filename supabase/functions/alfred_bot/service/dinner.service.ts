@@ -8,8 +8,8 @@ export default class DinnerService {
   );
 
   static joinLeaveDinnerButton = new InlineKeyboard()
-    .text("Join Dinner", "join-dinner-callback")
-    .text("Leave Dinner", "leave-dinner-callback");
+    .text("Leave Dinner", "leave-dinner-callback")
+    .text("Join Dinner", "join-dinner-callback");
 
   private static replyDinnerDetails(ctx: MyContext, data: any) {
     const formattedDate = data.date.split("-").reverse().join("/");
