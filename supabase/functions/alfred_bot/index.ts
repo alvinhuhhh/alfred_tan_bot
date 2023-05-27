@@ -69,6 +69,11 @@ bot.command("deleteuser", async (ctx) => {
   await ctx.conversation.enter("deleteUser");
 });
 
+// Handle the /getdinner command
+bot.command("getdinner", async (ctx) => {
+  await DinnerService.getDinner(ctx);
+});
+
 // Handle the /startdinner command
 bot.command("startdinner", async (ctx) => {
   await DinnerService.startDinner(ctx);

@@ -5,7 +5,8 @@ export default class DinnerRepository {
     const { data, error } = await db.from("dinner").select().eq("date", date);
     if (error) throw error;
 
-    return data;
+    if (data?.length) return data;
+    return null;
   }
 
   public static async insertDinner(date: string, name: string) {
