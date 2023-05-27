@@ -8,8 +8,9 @@ export default class DinnerRepository {
     if (query.error) throw query.error;
 
     if (query.data?.length) {
-      console.log(`[getDinnerByDate] ${JSON.stringify(query.data)}`);
-      return query.data[0];
+      const queryData = query.data[0];
+      console.log(`[getDinnerByDate] ${JSON.stringify(queryData)}`);
+      return queryData;
     } else {
       console.log(
         `[getDinnerByDate] dinner does not exist for date: ${ISODate}`
@@ -29,8 +30,9 @@ export default class DinnerRepository {
         .select();
       if (result.error) throw result.error;
 
+      const queryData = result.data[0];
       console.log(`[insertDinner] new dinner created`);
-      return result.data[0];
+      return queryData;
     } else {
       console.log(`[insertDinner] dinner already exists`);
       return data;
@@ -51,12 +53,13 @@ export default class DinnerRepository {
         .select();
       if (result.error) throw result.error;
 
+      const queryData = result.data[0];
       console.log(
         `[updateDinner] dinner updated for date: ${
           date.toISOString().split("T")[0]
         }`
       );
-      return result.data[0];
+      return queryData;
     } else {
       console.log(
         `[updateDinner] dinner does not exist for date: ${

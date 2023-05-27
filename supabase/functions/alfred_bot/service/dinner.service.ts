@@ -25,7 +25,7 @@ export default class DinnerService {
     const existingDinner = await DinnerRepository.getDinnerByDate(new Date());
     if (existingDinner) {
       let result;
-      const existingAttendees = existingDinner.attendees;
+      const existingAttendees = existingDinner["attendees"];
       console.log(`[joinDinner] Existing attendees: ${existingAttendees}`);
 
       if (!existingAttendees.includes(name)) {
@@ -44,7 +44,7 @@ export default class DinnerService {
     const existingDinner = await DinnerRepository.getDinnerByDate(new Date());
     if (existingDinner) {
       let result;
-      const existingAttendees = existingDinner.attendees;
+      const existingAttendees = existingDinner["attendees"];
 
       if (existingAttendees.includes(name)) {
         const newAttendees = existingAttendees.filter((attendee: string) => {
