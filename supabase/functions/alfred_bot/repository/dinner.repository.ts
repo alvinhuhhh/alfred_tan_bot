@@ -10,10 +10,9 @@ export default class DinnerRepository {
 
   public static async insertDinner(date: string, name: string) {
     // check if dinner already exists
-    const { data } = await db.from("dinner").select();
-    console.log(JSON.stringify(data));
+    const { data } = await db.from("dinner").select().eq("date", date);
 
-    if (!data) {
+    if (!data?.length) {
       const { data, error } = await db
         .from("dinner")
         .insert({ date: date, attendees: [name] })
