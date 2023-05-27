@@ -2,11 +2,13 @@ import DinnerRepository from "../repository/dinner.repository.ts";
 
 export default class DinnerService {
   private static replyDinnerDetails(ctx: MyContext, data: any) {
+    const formattedDate = data.date.split("-").reverse().join("/");
+
     const text = `
-    <b>Dinner tonight:</b>
-    Date: ${data.date}
-    Attendees:
-    ${data.attendees}
+<b>Dinner tonight:</b>
+Date: ${formattedDate}
+Attendees:
+${data.attendees}
     `;
 
     ctx.reply(text, { parse_mode: "HTML" });
