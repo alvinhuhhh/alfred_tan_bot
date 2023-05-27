@@ -2,9 +2,7 @@ import DinnerRepository from "../repository/dinner.repository.ts";
 
 export default class DinnerService {
   public static async getDinner(ctx: MyContext) {
-    const date = new Date().toLocaleDateString();
-
-    const data = await DinnerRepository.getDinnerByDate(date);
+    const data = await DinnerRepository.getDinnerByDate(new Date());
 
     if (data) {
       ctx.reply(`Dinner tonight: ${JSON.stringify(data)}`);
@@ -14,19 +12,17 @@ export default class DinnerService {
   }
 
   public static async startDinner(ctx: MyContext) {
-    const date = new Date().toLocaleDateString();
     const name = ctx.from?.first_name ?? "";
 
-    const data = await DinnerRepository.insertDinner(date, name);
+    const data = await DinnerRepository.insertDinner(new Date(), name);
 
     ctx.reply(`Dinner tonight: ${JSON.stringify(data)}`);
   }
 
   public static async joinDinner(ctx: MyContext) {
-    const date = new Date().toLocaleDateString();
     const name = ctx.from?.first_name ?? "";
 
-    const data = await DinnerRepository.updateDinner(date, name);
+    const data = await DinnerRepository.updateDinner(new Date(), name);
 
     ctx.reply(`Dinner tonight: ${JSON.stringify(data)}`);
   }

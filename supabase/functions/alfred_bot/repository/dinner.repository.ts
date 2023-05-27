@@ -1,15 +1,18 @@
 import db from "./db.repository.ts";
 
 export default class DinnerRepository {
-  public static async getDinnerByDate(date: string) {
-    const query = await db.from("dinner").select().eq("date", date);
+  public static async getDinnerByDate(date: Date) {
+    const query = await db
+      .from("dinner")
+      .select()
+      .eq("date", date.toISOString().split("T")[0]);
     if (query.error) throw query.error;
 
     if (query.count) return query.data;
     return null;
   }
 
-  public static async insertDinner(date: string, name: string) {
+  public static async insertDinner(date: Date, name: string) {
     // check if dinner already exists
     const data = await this.getDinnerByDate(date);
 
@@ -26,7 +29,7 @@ export default class DinnerRepository {
     }
   }
 
-  public static async updateDinner(date: string, name: string) {
+  public static async updateDinner(date: Date, name: string) {
     // check if dinner already exists
     const data = await this.getDinnerByDate(date);
 
@@ -49,7 +52,7 @@ export default class DinnerRepository {
     }
   }
 
-  public static async deleteDinner(date: string) {
+  public static async deleteDinner(date: Date) {
     // check if dinner already exists
     const data = await this.getDinnerByDate(date);
 
