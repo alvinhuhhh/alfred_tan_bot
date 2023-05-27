@@ -25,7 +25,7 @@ export default class DinnerService {
     const existingDinner = await DinnerRepository.getDinnerByDate(new Date());
     if (existingDinner) {
       let result;
-      const existingAttendees = existingDinner[0].attendees;
+      const existingAttendees = existingDinner.attendees;
 
       if (!existingAttendees.includes(name)) {
         const newAttendees = existingAttendees.push(name);
@@ -43,7 +43,7 @@ export default class DinnerService {
     const existingDinner = await DinnerRepository.getDinnerByDate(new Date());
     if (existingDinner) {
       let result;
-      const existingAttendees = existingDinner[0].attendees;
+      const existingAttendees = existingDinner.attendees;
 
       if (existingAttendees.includes(name)) {
         const newAttendees = existingAttendees.filter((attendee: string) => {

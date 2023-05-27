@@ -9,7 +9,7 @@ export default class DinnerRepository {
 
     if (query.data?.length) {
       console.log(`[getDinnerByDate] ${JSON.stringify(query.data)}`);
-      return query.data;
+      return query.data[0];
     } else {
       console.log(
         `[getDinnerByDate] dinner does not exist for date: ${ISODate}`
@@ -30,7 +30,7 @@ export default class DinnerRepository {
       if (result.error) throw result.error;
 
       console.log(`[insertDinner] new dinner created`);
-      return result.data;
+      return result.data[0];
     } else {
       console.log(`[insertDinner] dinner already exists`);
       return data;
@@ -42,7 +42,7 @@ export default class DinnerRepository {
     const data = await this.getDinnerByDate(date);
 
     if (data) {
-      const dinnerId = data[0].id;
+      const dinnerId = data.id;
 
       const result = await db
         .from("dinner")
@@ -56,7 +56,7 @@ export default class DinnerRepository {
           date.toISOString().split("T")[0]
         }`
       );
-      return result.data;
+      return result.data[0];
     } else {
       console.log(
         `[updateDinner] dinner does not exist for date: ${
