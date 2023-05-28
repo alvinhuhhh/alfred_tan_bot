@@ -1,10 +1,9 @@
 import db from "./db.repository.ts";
+import Config from "../config.ts";
 
 export default class UsersRepository {
-  static USERS_TABLE = "users";
-
   public static async getAllUsers() {
-    const query = await db.from(this.USERS_TABLE).select();
+    const query = await db.from(Config.USERS_TABLENAME).select();
     if (query.error) throw query.error;
 
     console.log(`[getAllUsers] ${JSON.stringify(query.data)}`);
@@ -12,7 +11,10 @@ export default class UsersRepository {
   }
 
   public static async getUserByName(name: string) {
-    const query = await db.from(this.USERS_TABLE).select("id").eq("name", name);
+    const query = await db
+      .from(Config.USERS_TABLENAME)
+      .select("id")
+      .eq("name", name);
     if (query.error) throw query.error;
 
     if (query.data?.length) {
@@ -31,7 +33,7 @@ export default class UsersRepository {
 
     if (!data) {
       const result = await db
-        .from(this.USERS_TABLE)
+        .from(Config.USERS_TABLENAME)
         .insert({ name: name })
         .select();
       if (result.error) throw result.error;
@@ -53,7 +55,7 @@ export default class UsersRepository {
 
     if (data) {
       const result = await db
-        .from(this.USERS_TABLE)
+        .from(Config.USERS_TABLENAME)
         .update({ name: newName })
         .eq("name", name)
         .select();
@@ -70,10 +72,13 @@ export default class UsersRepository {
 
   public static async deleteUser(id: number) {
     // check if user exists
-    const data = await db.from(this.USERS_TABLE).select().eq("id", id);
+    const data = await db.from(Config.USERS_TABLENAME).select().eq("id", id);
 
     if (data) {
-      const result = await db.from(this.USERS_TABLE).delete().eq("id", id);
+      const result = await db
+        .from(Config.USERS_TABLENAME)
+        .delete()
+        .eq("id", id);
       if (result.error) throw result.error;
 
       console.log(`[deleteUser] user deleted for id: ${id}`);

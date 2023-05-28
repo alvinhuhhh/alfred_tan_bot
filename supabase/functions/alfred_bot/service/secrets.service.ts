@@ -36,7 +36,7 @@ export default class SecretsService {
     conversation: MyConversation,
     ctx: MyContext
   ): Promise<void> {
-    await ctx.reply("What is the WIFI password?");
+    await ctx.reply("Okay, what is the WIFI password?");
     const userMsg = await conversation.waitFor(":text");
 
     if (userMsg.update.message?.text) {
@@ -54,7 +54,7 @@ export default class SecretsService {
         );
       }
 
-      this.replyWIFIPassword(ctx, data);
+      ctx.reply("I'll remember it!");
       return;
     }
   }

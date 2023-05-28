@@ -1,12 +1,14 @@
 import db from "./db.repository.ts";
+import Config from "../config.ts";
 
 export default class DinnerRepository {
-  static DINNER_TABLE = "dinner";
-
   public static async getDinnerByDate(date: Date) {
     const ISODate: string = date.toISOString().split("T")[0];
 
-    const query = await db.from(this.DINNER_TABLE).select().eq("date", ISODate);
+    const query = await db
+      .from(Config.DINNER_TABLENAME)
+      .select()
+      .eq("date", ISODate);
     if (query.error) throw query.error;
 
     if (query.data?.length) {
@@ -27,7 +29,7 @@ export default class DinnerRepository {
 
     if (!data) {
       const result = await db
-        .from(this.DINNER_TABLE)
+        .from(Config.DINNER_TABLENAME)
         .insert({ date: date, attendees: [name] })
         .select();
       if (result.error) throw result.error;
@@ -49,7 +51,7 @@ export default class DinnerRepository {
       const dinnerId: number = data.id;
 
       const result = await db
-        .from(this.DINNER_TABLE)
+        .from(Config.DINNER_TABLENAME)
         .update({ attendees: attendees })
         .eq("id", dinnerId)
         .select();
@@ -80,7 +82,7 @@ export default class DinnerRepository {
 
     if (data) {
       const result = await db
-        .from(this.DINNER_TABLE)
+        .from(Config.DINNER_TABLENAME)
         .delete()
         .eq("date", ISODate);
       if (result.error) throw result.error;
