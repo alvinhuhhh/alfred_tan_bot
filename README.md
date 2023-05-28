@@ -10,6 +10,8 @@ Alfred is a Telegram bot that handles administrative duties for my family.
 
 - Government voucher tracker
 
+- Remembering the WIFI password
+
 ## Application Stack
 
 - [Telegram Bot API](https://core.telegram.org/bots/api)
