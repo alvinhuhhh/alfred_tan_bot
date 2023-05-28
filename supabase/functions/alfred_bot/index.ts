@@ -12,6 +12,7 @@ import {
 // Import services
 import UsersService from "./service/users.service.ts";
 import DinnerService from "./service/dinner.service.ts";
+import SecretsService from "./service/secrets.service.ts";
 
 // Create an instance of the Bot class
 const token = Deno.env.get("BOT_TOKEN");
@@ -37,11 +38,11 @@ bot.use(createConversation(UsersService.updateUser));
 bot.use(createConversation(UsersService.deleteUser));
 
 // Basic commands
-// bot.hears(/alfred/i, (ctx) => {
-//   ctx.reply("How can I help?", {
-//     reply_to_message_id: ctx.msg.message_id,
-//   });
-// });
+bot.hears(/\balfred\b/i, (ctx) => {
+  ctx.reply("How can I help?", {
+    reply_to_message_id: ctx.msg.message_id,
+  });
+});
 
 bot.command("start", (ctx) => ctx.reply("Welcome! I am up and running!"));
 
@@ -101,6 +102,11 @@ bot.callbackQuery("leave-dinner-callback", async (ctx) => {
 // Handle the /enddinner command
 bot.command("enddinner", async (ctx) => {
   await DinnerService.endDinner(ctx);
+});
+
+// Handle the /getwifipassword command
+bot.command("getwifipassword", async (ctx) => {
+  await SecretsService.getWIFIPassword(ctx);
 });
 
 const handleUpdate = webhookCallback(bot, "std/http");
