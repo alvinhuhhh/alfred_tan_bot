@@ -1,7 +1,7 @@
 import db from "./db.repository.ts";
 
 export default class DinnerRepository {
-  private static DINNER_TABLE = "dinner";
+  static DINNER_TABLE = "dinner";
 
   public static async getDinnerByDate(date: Date) {
     const ISODate: string = date.toISOString().split("T")[0];

@@ -1,7 +1,7 @@
 import db from "./db.repository.ts";
 
 export default class UsersRepository {
-  private static USERS_TABLE = "users";
+  static USERS_TABLE = "users";
 
   public static async getAllUsers() {
     const query = await db.from(this.USERS_TABLE).select();

@@ -1,7 +1,7 @@
 import db from "./db.repository.ts";
 
 export default class SecretsRepository {
-  private static SECRETS_TABLE = "secrets";
+  static SECRETS_TABLE = "secrets";
 
   public static async getSecretByKey(key: string) {
     const query = await db.from(this.SECRETS_TABLE).select().eq("key", key);

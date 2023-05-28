@@ -2,7 +2,7 @@ import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 import SecretsRepository from "../repository/secrets.repository.ts";
 
 export default class SecretsService {
-  private static WIFI_PASSWORD_KEY = "wifi_password";
+  static WIFI_PASSWORD_KEY = "wifi_password";
 
   static setWIFIPasswordButton = new InlineKeyboard().text(
     "Set WIFI Password",
