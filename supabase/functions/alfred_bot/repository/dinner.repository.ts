@@ -1,10 +1,12 @@
 import db from "./db.repository.ts";
 
 export default class DinnerRepository {
+  private static DINNER_TABLE = "dinner";
+
   public static async getDinnerByDate(date: Date) {
     const ISODate: string = date.toISOString().split("T")[0];
 
-    const query = await db.from("dinner").select().eq("date", ISODate);
+    const query = await db.from(this.DINNER_TABLE).select().eq("date", ISODate);
     if (query.error) throw query.error;
 
     if (query.data?.length) {
@@ -25,7 +27,7 @@ export default class DinnerRepository {
 
     if (!data) {
       const result = await db
-        .from("dinner")
+        .from(this.DINNER_TABLE)
         .insert({ date: date, attendees: [name] })
         .select();
       if (result.error) throw result.error;
@@ -47,7 +49,7 @@ export default class DinnerRepository {
       const dinnerId: number = data.id;
 
       const result = await db
-        .from("dinner")
+        .from(this.DINNER_TABLE)
         .update({ attendees: attendees })
         .eq("id", dinnerId)
         .select();
@@ -77,7 +79,10 @@ export default class DinnerRepository {
     const data = await this.getDinnerByDate(date);
 
     if (data) {
-      const result = await db.from("dinner").delete().eq("date", ISODate);
+      const result = await db
+        .from(this.DINNER_TABLE)
+        .delete()
+        .eq("date", ISODate);
       if (result.error) throw result.error;
 
       console.log(`[deleteDinner] dinner deleted for date: ${ISODate}`);

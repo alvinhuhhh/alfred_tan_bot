@@ -1,8 +1,10 @@
 import db from "./db.repository.ts";
 
 export default class SecretsRepository {
+  private static SECRETS_TABLE = "secrets";
+
   public static async getSecretByKey(key: string) {
-    const query = await db.from("secrets").select().eq("key", key);
+    const query = await db.from(this.SECRETS_TABLE).select().eq("key", key);
     if (query.error) throw query.error;
 
     if (query.data?.length) {
@@ -21,7 +23,7 @@ export default class SecretsRepository {
 
     if (!data) {
       const result = await db
-        .from("secrets")
+        .from(this.SECRETS_TABLE)
         .insert({ key: key, value: value })
         .select();
       if (result.error) throw result.error;
@@ -41,7 +43,7 @@ export default class SecretsRepository {
 
     if (data) {
       const result = await db
-        .from("secrets")
+        .from(this.SECRETS_TABLE)
         .update({ value: newValue })
         .eq("key", key)
         .select();
@@ -61,7 +63,7 @@ export default class SecretsRepository {
     const data = await this.getSecretByKey(key);
 
     if (data) {
-      const result = await db.from("secrets").delete().eq("key", key);
+      const result = await db.from(this.SECRETS_TABLE).delete().eq("key", key);
       if (result.error) throw result.error;
 
       console.log(`[deleteSecret] secret deleted for key: ${key}`);

@@ -36,6 +36,7 @@ bot.use(conversations());
 bot.use(createConversation(UsersService.addUser));
 bot.use(createConversation(UsersService.updateUser));
 bot.use(createConversation(UsersService.deleteUser));
+bot.use(createConversation(SecretsService.setWIFIPassword));
 
 // Basic commands
 bot.hears(/\balfred\b/i, (ctx) => {
@@ -107,6 +108,19 @@ bot.command("enddinner", async (ctx) => {
 // Handle the /getwifipassword command
 bot.command("getwifipassword", async (ctx) => {
   await SecretsService.getWIFIPassword(ctx);
+});
+
+// Handle the /setwifipassword command
+bot.command("setwifipassword", async (ctx) => {
+  await ctx.conversation.enter("setWIFIPassword");
+});
+bot.callbackQuery("set-wifi-password-callback", async (ctx) => {
+  await ctx.conversation.enter("setWIFIPassword");
+});
+
+// Handle the /removewifipassword command
+bot.command("removewifipassword", async (ctx) => {
+  await SecretsService.removeWIFIPassword(ctx);
 });
 
 const handleUpdate = webhookCallback(bot, "std/http");

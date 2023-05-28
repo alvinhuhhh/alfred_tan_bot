@@ -104,6 +104,5 @@ Attendees:
     await DinnerRepository.deleteDinner(new Date());
 
     ctx.reply("No more dinner for tonight!");
-    return;
   }
 }

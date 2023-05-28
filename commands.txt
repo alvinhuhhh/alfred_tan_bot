@@ -7,3 +7,6 @@ startdinner - Start tonight's dinner attendance
 joindinner - Join tonight's dinner
 leavedinner - Leave tonight's dinner
 enddinner - Cancel tonight's dinner
+getwifipassword - Get the WIFI password
+setwifipassword - Ask Alfred to remember the WIFI password
+removewifipassword - Ask Alfred to forget the WIFI password
