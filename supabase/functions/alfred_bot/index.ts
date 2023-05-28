@@ -8,6 +8,7 @@ import {
   conversations,
   createConversation,
 } from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
+import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 
 // Import services
 import UsersService from "./service/users.service.ts";
@@ -38,17 +39,25 @@ bot.use(createConversation(UsersService.updateUser));
 bot.use(createConversation(UsersService.deleteUser));
 bot.use(createConversation(SecretsService.setWIFIPassword));
 
+// Command catalog
+const commandCatalog = new InlineKeyboard()
+  .text("Get tonight's dinner", "get-dinner-callback")
+  .text("Ask me for the WIFI password", "get-wifi-password-callback");
+
 // Basic commands
 bot.hears(/\balfred\b/i, (ctx) => {
   ctx.reply("How can I help?", {
     reply_to_message_id: ctx.msg.message_id,
+    reply_markup: commandCatalog,
   });
 });
 
 bot.command("start", (ctx) => ctx.reply("Welcome! I am up and running!"));
 
 bot.command("hello", (ctx) =>
-  ctx.reply("Hello there! What can I do for you today?")
+  ctx.reply("Hello there! What can I do for you today?", {
+    reply_markup: commandCatalog,
+  })
 );
 
 // Handle the /getusers command
@@ -73,6 +82,9 @@ bot.command("deleteuser", async (ctx) => {
 
 // Handle the /getdinner command
 bot.command("getdinner", async (ctx) => {
+  await DinnerService.getDinner(ctx);
+});
+bot.callbackQuery("get-dinner-callback", async (ctx) => {
   await DinnerService.getDinner(ctx);
 });
 
@@ -107,6 +119,9 @@ bot.command("enddinner", async (ctx) => {
 
 // Handle the /getwifipassword command
 bot.command("getwifipassword", async (ctx) => {
+  await SecretsService.getWIFIPassword(ctx);
+});
+bot.callbackQuery("get-wifi-password-callback", async (ctx) => {
   await SecretsService.getWIFIPassword(ctx);
 });
 
