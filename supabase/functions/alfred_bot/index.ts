@@ -41,8 +41,10 @@ bot.use(createConversation(SecretsService.setWIFIPassword));
 
 // Command catalog
 const commandCatalog = new InlineKeyboard()
-  .text("Get tonight's dinner", "get-dinner-callback")
-  .text("Ask me for the WIFI password", "get-wifi-password-callback");
+  .text("See who's on tonight's dinner", "get-dinner-callback")
+  .row()
+  .text("Ask me for the WIFI password", "get-wifi-password-callback")
+  .row();
 
 // Basic commands
 bot.hears(/\balfred\b/i, (ctx) => {
