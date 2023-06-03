@@ -1,4 +1,5 @@
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
+import ChatsRepository from "../repository/chats.repository.ts";
 import DinnersRepository from "../repository/dinners.repository.ts";
 
 export default class DinnersService {
@@ -42,67 +43,108 @@ Attendees:
   }
 
   public static async getDinner(ctx: MyContext): Promise<void> {
-    const data = await DinnersRepository.getDinnerByDate(new Date());
+    if (ctx.chat?.id) {
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-    if (data) {
-      this.replyDinnerDetails(ctx, data);
-    } else {
-      this.replyDinnerNotFound(ctx);
+      const data = await DinnersRepository.getDinnerByDate(
+        ctx.chat.id,
+        new Date()
+      );
+
+      if (data) {
+        this.replyDinnerDetails(ctx, data);
+      } else {
+        this.replyDinnerNotFound(ctx);
+      }
     }
   }
 
   public static async startDinner(ctx: MyContext): Promise<void> {
-    const name: string = ctx.from?.first_name ?? "";
+    if (ctx.chat?.id) {
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-    const data = await DinnersRepository.insertDinner(new Date(), name);
+      const name: string = ctx.from?.first_name ?? "";
 
-    this.replyDinnerDetails(ctx, data);
+      const data = await DinnersRepository.insertDinner(
+        ctx.chat.id,
+        new Date(),
+        name
+      );
+
+      this.replyDinnerDetails(ctx, data);
+    }
   }
 
   public static async joinDinner(ctx: MyContext): Promise<void> {
-    const name: string = ctx.from?.first_name ?? "";
+    if (ctx.chat?.id) {
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-    const existingDinner = await DinnersRepository.getDinnerByDate(new Date());
-    if (existingDinner) {
-      let result;
-      const attendees: Array<string> = existingDinner.attendees;
+      const name: string = ctx.from?.first_name ?? "";
 
-      if (!attendees.includes(name)) {
-        attendees.push(name);
-        result = await DinnersRepository.updateDinner(new Date(), attendees);
+      const existingDinner = await DinnersRepository.getDinnerByDate(
+        ctx.chat.id,
+        new Date()
+      );
+      if (existingDinner) {
+        let result;
+        const attendees: Array<string> = existingDinner.attendees;
+
+        if (!attendees.includes(name)) {
+          attendees.push(name);
+          result = await DinnersRepository.updateDinner(
+            ctx.chat.id,
+            new Date(),
+            attendees
+          );
+        }
+        this.replyDinnerDetails(ctx, result);
+      } else {
+        this.replyDinnerNotFound(ctx);
       }
-      this.replyDinnerDetails(ctx, result);
-    } else {
-      this.replyDinnerNotFound(ctx);
     }
   }
 
   public static async leaveDinner(ctx: MyContext): Promise<void> {
-    const name: string = ctx.from?.first_name ?? "";
+    if (ctx.chat?.id) {
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-    const existingDinner = await DinnersRepository.getDinnerByDate(new Date());
-    if (existingDinner) {
-      let result;
-      const existingAttendees: Array<string> = existingDinner["attendees"];
+      const name: string = ctx.from?.first_name ?? "";
 
-      if (existingAttendees.includes(name)) {
-        const newAttendees: Array<string> = existingAttendees.filter(
-          (attendee: string) => {
-            return attendee != name;
-          }
-        );
+      const existingDinner = await DinnersRepository.getDinnerByDate(
+        ctx.chat.id,
+        new Date()
+      );
+      if (existingDinner) {
+        let result;
+        const existingAttendees: Array<string> = existingDinner["attendees"];
 
-        result = await DinnersRepository.updateDinner(new Date(), newAttendees);
+        if (existingAttendees.includes(name)) {
+          const newAttendees: Array<string> = existingAttendees.filter(
+            (attendee: string) => {
+              return attendee != name;
+            }
+          );
+
+          result = await DinnersRepository.updateDinner(
+            ctx.chat.id,
+            new Date(),
+            newAttendees
+          );
+        }
+        this.replyDinnerDetails(ctx, result);
+      } else {
+        this.replyDinnerNotFound(ctx);
       }
-      this.replyDinnerDetails(ctx, result);
-    } else {
-      this.replyDinnerNotFound(ctx);
     }
   }
 
   public static async endDinner(ctx: MyContext): Promise<void> {
-    await DinnersRepository.deleteDinner(new Date());
+    if (ctx.chat?.id) {
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-    ctx.reply("No more dinner for tonight!");
+      await DinnersRepository.deleteDinner(ctx.chat.id, new Date());
+
+      ctx.reply("No more dinner for tonight!");
+    }
   }
 }

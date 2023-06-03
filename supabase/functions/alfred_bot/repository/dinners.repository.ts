@@ -2,12 +2,13 @@ import db from "./db.repository.ts";
 import Config from "../config.ts";
 
 export default class DinnersRepository {
-  public static async getDinnerByDate(date: Date) {
+  public static async getDinnerByDate(chatId: number, date: Date) {
     const ISODate: string = date.toISOString().split("T")[0];
 
     const query = await db
       .from(Config.DINNER_TABLENAME)
       .select()
+      .eq("chatId", chatId)
       .eq("date", ISODate);
     if (query.error) throw query.error;
 
@@ -23,14 +24,14 @@ export default class DinnersRepository {
     }
   }
 
-  public static async insertDinner(date: Date, name: string) {
+  public static async insertDinner(chatId: number, date: Date, name: string) {
     // check if dinner already exists
-    const data = await this.getDinnerByDate(date);
+    const data = await this.getDinnerByDate(chatId, date);
 
     if (!data) {
       const result = await db
         .from(Config.DINNER_TABLENAME)
-        .insert({ date: date, attendees: [name] })
+        .insert({ date: date, attendees: [name], chatId: chatId })
         .select();
       if (result.error) throw result.error;
 
@@ -43,9 +44,13 @@ export default class DinnersRepository {
     }
   }
 
-  public static async updateDinner(date: Date, attendees: Array<string>) {
+  public static async updateDinner(
+    chatId: number,
+    date: Date,
+    attendees: Array<string>
+  ) {
     // check if dinner already exists
-    const data = await this.getDinnerByDate(date);
+    const data = await this.getDinnerByDate(chatId, date);
 
     if (data) {
       const dinnerId: number = data.id;
@@ -74,17 +79,19 @@ export default class DinnersRepository {
     }
   }
 
-  public static async deleteDinner(date: Date) {
+  public static async deleteDinner(chatId: number, date: Date) {
     const ISODate: string = date.toISOString().split("T")[0];
 
     // check if dinner already exists
-    const data = await this.getDinnerByDate(date);
+    const data = await this.getDinnerByDate(chatId, date);
 
     if (data) {
+      const dinnerId: number = data.id;
+
       const result = await db
         .from(Config.DINNER_TABLENAME)
         .delete()
-        .eq("date", ISODate);
+        .eq("id", dinnerId);
       if (result.error) throw result.error;
 
       console.log(`[deleteDinner] dinner deleted for date: ${ISODate}`);
