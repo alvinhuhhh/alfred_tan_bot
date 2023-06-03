@@ -49,11 +49,12 @@ export default class SecretsRepository {
     const data = await this.getSecretByKey(chatId, key);
 
     if (data) {
+      const secretId = data.id;
+
       const result = await db
         .from(Config.SECRET_TABLENAME)
         .update({ value: newValue })
-        .eq("chatId", chatId)
-        .eq("key", key)
+        .eq("id", secretId)
         .select();
       if (result.error) throw result.error;
 
@@ -71,11 +72,12 @@ export default class SecretsRepository {
     const data = await this.getSecretByKey(chatId, key);
 
     if (data) {
+      const secretId = data.id;
+
       const result = await db
         .from(Config.SECRET_TABLENAME)
         .delete()
-        .eq("chatId", chatId)
-        .eq("key", key);
+        .eq("id", secretId);
       if (result.error) throw result.error;
 
       console.log(`[deleteSecret] secret deleted for key: ${key}`);
