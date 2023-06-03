@@ -51,9 +51,8 @@ bot.hears(/\balfred\b/i, (ctx) => {
   });
 });
 
-bot.command("start", (ctx) => {
-  console.log(ctx.chat.id);
-  ctx.reply("Welcome! I am up and running!");
+bot.command("start", async (ctx) => {
+  await ChatsService.addChat(ctx);
 });
 
 bot.command("hello", (ctx) =>
