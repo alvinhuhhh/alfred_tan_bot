@@ -1,7 +1,7 @@
 import db from "./db.repository.ts";
 import Config from "../config.ts";
 
-export default class DinnerRepository {
+export default class DinnersRepository {
   public static async getDinnerByDate(date: Date) {
     const ISODate: string = date.toISOString().split("T")[0];
 

@@ -1,7 +1,7 @@
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
-import DinnerRepository from "../repository/dinner.repository.ts";
+import DinnersRepository from "../repository/dinners.repository.ts";
 
-export default class DinnerService {
+export default class DinnersService {
   static startDinnerButton = new InlineKeyboard().text(
     "Start Dinner",
     "start-dinner-callback"
@@ -42,7 +42,7 @@ Attendees:
   }
 
   public static async getDinner(ctx: MyContext): Promise<void> {
-    const data = await DinnerRepository.getDinnerByDate(new Date());
+    const data = await DinnersRepository.getDinnerByDate(new Date());
 
     if (data) {
       this.replyDinnerDetails(ctx, data);
@@ -54,7 +54,7 @@ Attendees:
   public static async startDinner(ctx: MyContext): Promise<void> {
     const name: string = ctx.from?.first_name ?? "";
 
-    const data = await DinnerRepository.insertDinner(new Date(), name);
+    const data = await DinnersRepository.insertDinner(new Date(), name);
 
     this.replyDinnerDetails(ctx, data);
   }
@@ -62,14 +62,14 @@ Attendees:
   public static async joinDinner(ctx: MyContext): Promise<void> {
     const name: string = ctx.from?.first_name ?? "";
 
-    const existingDinner = await DinnerRepository.getDinnerByDate(new Date());
+    const existingDinner = await DinnersRepository.getDinnerByDate(new Date());
     if (existingDinner) {
       let result;
       const attendees: Array<string> = existingDinner.attendees;
 
       if (!attendees.includes(name)) {
         attendees.push(name);
-        result = await DinnerRepository.updateDinner(new Date(), attendees);
+        result = await DinnersRepository.updateDinner(new Date(), attendees);
       }
       this.replyDinnerDetails(ctx, result);
     } else {
@@ -80,7 +80,7 @@ Attendees:
   public static async leaveDinner(ctx: MyContext): Promise<void> {
     const name: string = ctx.from?.first_name ?? "";
 
-    const existingDinner = await DinnerRepository.getDinnerByDate(new Date());
+    const existingDinner = await DinnersRepository.getDinnerByDate(new Date());
     if (existingDinner) {
       let result;
       const existingAttendees: Array<string> = existingDinner["attendees"];
@@ -92,7 +92,7 @@ Attendees:
           }
         );
 
-        result = await DinnerRepository.updateDinner(new Date(), newAttendees);
+        result = await DinnersRepository.updateDinner(new Date(), newAttendees);
       }
       this.replyDinnerDetails(ctx, result);
     } else {
@@ -101,7 +101,7 @@ Attendees:
   }
 
   public static async endDinner(ctx: MyContext): Promise<void> {
-    await DinnerRepository.deleteDinner(new Date());
+    await DinnersRepository.deleteDinner(new Date());
 
     ctx.reply("No more dinner for tonight!");
   }

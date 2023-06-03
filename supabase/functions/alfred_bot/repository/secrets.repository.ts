@@ -4,7 +4,7 @@ import Config from "../config.ts";
 export default class SecretsRepository {
   public static async getSecretByKey(key: string) {
     const query = await db
-      .from(Config.SECRETS_TABLENAME)
+      .from(Config.SECRET_TABLENAME)
       .select()
       .eq("key", key);
     if (query.error) throw query.error;
@@ -25,7 +25,7 @@ export default class SecretsRepository {
 
     if (!data) {
       const result = await db
-        .from(Config.SECRETS_TABLENAME)
+        .from(Config.SECRET_TABLENAME)
         .insert({ key: key, value: value })
         .select();
       if (result.error) throw result.error;
@@ -45,7 +45,7 @@ export default class SecretsRepository {
 
     if (data) {
       const result = await db
-        .from(Config.SECRETS_TABLENAME)
+        .from(Config.SECRET_TABLENAME)
         .update({ value: newValue })
         .eq("key", key)
         .select();
@@ -66,7 +66,7 @@ export default class SecretsRepository {
 
     if (data) {
       const result = await db
-        .from(Config.SECRETS_TABLENAME)
+        .from(Config.SECRET_TABLENAME)
         .delete()
         .eq("key", key);
       if (result.error) throw result.error;

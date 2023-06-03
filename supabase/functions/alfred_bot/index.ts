@@ -11,8 +11,8 @@ import {
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 
 // Import services
-import UsersService from "./service/users.service.ts";
-import DinnerService from "./service/dinner.service.ts";
+import ChatsService from "./service/chats.service.ts";
+import DinnersService from "./service/dinners.service.ts";
 import SecretsService from "./service/secrets.service.ts";
 
 // Create an instance of the Bot class
@@ -34,9 +34,6 @@ bot.use(
 bot.use(conversations());
 
 // Register conversations
-bot.use(createConversation(UsersService.addUser));
-bot.use(createConversation(UsersService.updateUser));
-bot.use(createConversation(UsersService.deleteUser));
 bot.use(createConversation(SecretsService.setWIFIPassword));
 
 // Command catalog
@@ -54,7 +51,10 @@ bot.hears(/\balfred\b/i, (ctx) => {
   });
 });
 
-bot.command("start", (ctx) => ctx.reply("Welcome! I am up and running!"));
+bot.command("start", (ctx) => {
+  console.log(ctx.chat.id);
+  ctx.reply("Welcome! I am up and running!");
+});
 
 bot.command("hello", (ctx) =>
   ctx.reply("Hello there! What can I do for you today?", {
@@ -62,61 +62,41 @@ bot.command("hello", (ctx) =>
   })
 );
 
-// Handle the /getusers command
-bot.command("getusers", async (ctx) => {
-  await UsersService.getAllUsers(ctx);
-});
-
-// Handle the /adduser command
-bot.command("adduser", async (ctx) => {
-  await ctx.conversation.enter("addUser");
-});
-
-// Handle the /updateuser command
-bot.command("updateuser", async (ctx) => {
-  await ctx.conversation.enter("updateUser");
-});
-
-// Handle the /deleteuser command
-bot.command("deleteuser", async (ctx) => {
-  await ctx.conversation.enter("deleteUser");
-});
-
 // Handle the /getdinner command
 bot.command("getdinner", async (ctx) => {
-  await DinnerService.getDinner(ctx);
+  await DinnersService.getDinner(ctx);
 });
 bot.callbackQuery("get-dinner-callback", async (ctx) => {
-  await DinnerService.getDinner(ctx);
+  await DinnersService.getDinner(ctx);
 });
 
 // Handle the /startdinner command
 bot.command("startdinner", async (ctx) => {
-  await DinnerService.startDinner(ctx);
+  await DinnersService.startDinner(ctx);
 });
 bot.callbackQuery("start-dinner-callback", async (ctx) => {
-  await DinnerService.startDinner(ctx);
+  await DinnersService.startDinner(ctx);
 });
 
 // Handle the /joindinner command
 bot.command("joindinner", async (ctx) => {
-  await DinnerService.joinDinner(ctx);
+  await DinnersService.joinDinner(ctx);
 });
 bot.callbackQuery("join-dinner-callback", async (ctx) => {
-  await DinnerService.joinDinner(ctx);
+  await DinnersService.joinDinner(ctx);
 });
 
 // Handle the /leavedinner command
 bot.command("leavedinner", async (ctx) => {
-  await DinnerService.leaveDinner(ctx);
+  await DinnersService.leaveDinner(ctx);
 });
 bot.callbackQuery("leave-dinner-callback", async (ctx) => {
-  await DinnerService.leaveDinner(ctx);
+  await DinnersService.leaveDinner(ctx);
 });
 
 // Handle the /enddinner command
 bot.command("enddinner", async (ctx) => {
-  await DinnerService.endDinner(ctx);
+  await DinnersService.endDinner(ctx);
 });
 
 // Handle the /getwifipassword command
