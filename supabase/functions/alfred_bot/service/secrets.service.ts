@@ -42,16 +42,20 @@ export default class SecretsService {
     conversation: MyConversation,
     ctx: MyContext
   ): Promise<void> {
-    if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+    await ctx.reply("Okay, what is the WIFI password?");
+    const userMsg = await conversation.waitFor(":text");
 
-      await ctx.reply("Okay, what is the WIFI password?");
-      const userMsg = await conversation.waitFor(":text");
+    if (userMsg.update.message?.text) {
+      if (userMsg.update.message.chat?.id) {
+        await ChatsRepository.insertChat(
+          userMsg.update.message.chat.id,
+          userMsg.update.message.chat.type
+        );
+        const chatId = userMsg.update.message.chat.id;
 
-      if (userMsg.update.message?.text) {
         // update secret if key exists
         const data = await SecretsRepository.updateSecret(
-          ctx.chat.id,
+          chatId,
           Config.WIFI_PASSWORD_KEY,
           userMsg.update.message.text
         );
@@ -59,7 +63,7 @@ export default class SecretsService {
         if (!data) {
           // add new secret if key does not exist
           await SecretsRepository.insertSecret(
-            ctx.chat.id,
+            chatId,
             Config.WIFI_PASSWORD_KEY,
             userMsg.update.message.text
           );
