@@ -8,7 +8,6 @@ import {
   conversations,
   createConversation,
 } from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
-import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 
 // Import services
 import ChatsService from "./service/chats.service.ts";
@@ -36,30 +35,16 @@ bot.use(conversations());
 // Register conversations
 bot.use(createConversation(SecretsService.setWIFIPassword));
 
-// Command catalog
-const commandCatalog = new InlineKeyboard()
-  .text("See who's on tonight's dinner", "get-dinner-callback")
-  .row()
-  .text("Ask me for the WIFI password", "get-wifi-password-callback")
-  .row();
-
 // Basic commands
-bot.hears(/\balfred\b/i, (ctx) => {
-  ctx.reply("How can I help?", {
-    reply_to_message_id: ctx.msg.message_id,
-    reply_markup: commandCatalog,
-  });
-});
-
 bot.command("start", async (ctx) => {
-  await ChatsService.addChat(ctx);
+  await ChatsService.startChat(ctx);
 });
 
-bot.command("hello", (ctx) =>
-  ctx.reply("Hello there! What can I do for you today?", {
-    reply_markup: commandCatalog,
-  })
-);
+bot.command("hello", async (ctx) => await ChatsService.replyHello(ctx));
+
+bot.hears(/\balfred\b/i, async (ctx) => {
+  await ChatsService.replyName(ctx);
+});
 
 // Handle the /getdinner command
 bot.command("getdinner", async (ctx) => {
