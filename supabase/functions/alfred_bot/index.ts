@@ -34,6 +34,7 @@ bot.use(conversations());
 
 // Register conversations
 bot.use(createConversation(SecretsService.setWIFIPassword));
+bot.use(createConversation(SecretsService.setVoucherLink));
 
 // Basic commands
 bot.hears(/\balfred\b/i, async (ctx) => {
@@ -102,6 +103,27 @@ bot.callbackQuery("set-wifi-password-callback", async (ctx) => {
 // Handle the /removewifipassword command
 bot.command("removewifipassword", async (ctx) => {
   await SecretsService.removeWIFIPassword(ctx);
+});
+
+// Handle the /getcdcvouchers command
+bot.command("getcdcvouchers", async (ctx) => {
+  await SecretsService.getVoucherLink(ctx);
+});
+bot.callbackQuery("get-voucher-link-callback", async (ctx) => {
+  await SecretsService.getVoucherLink(ctx);
+});
+
+// Handle the /setcdcvoucherlink command
+bot.command("setcdcvoucherlink", async (ctx) => {
+  await ctx.conversation.enter("setVoucherLink");
+});
+bot.callbackQuery("set-voucher-link-callback", async (ctx) => {
+  await ctx.conversation.enter("setVoucherLink");
+});
+
+// Handle the /removecdcvoucherlink command
+bot.command("removecdcvoucherlink", async (ctx) => {
+  await SecretsService.removeVoucherLink(ctx);
 });
 
 const handleUpdate = webhookCallback(bot, "std/http");
