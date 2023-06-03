@@ -6,6 +6,8 @@ export default class ChatsService {
     .text("See who's on tonight's dinner", "get-dinner-callback")
     .row()
     .text("Ask me for the WIFI password", "get-wifi-password-callback")
+    .row()
+    .text("Ask for the link for CDC Vouchers", "get-voucher-link-callback")
     .row();
 
   public static async startChat(ctx: MyContext): Promise<void> {
