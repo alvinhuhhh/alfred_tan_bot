@@ -36,15 +36,15 @@ bot.use(conversations());
 bot.use(createConversation(SecretsService.setWIFIPassword));
 
 // Basic commands
+bot.hears(/\balfred\b/i, async (ctx) => {
+  await ChatsService.replyName(ctx);
+});
+
 bot.command("start", async (ctx) => {
   await ChatsService.startChat(ctx);
 });
 
 bot.command("hello", async (ctx) => await ChatsService.replyHello(ctx));
-
-bot.hears(/\balfred\b/i, async (ctx) => {
-  await ChatsService.replyName(ctx);
-});
 
 // Handle the /getdinner command
 bot.command("getdinner", async (ctx) => {
