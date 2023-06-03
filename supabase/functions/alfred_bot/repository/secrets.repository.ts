@@ -2,10 +2,11 @@ import db from "./db.repository.ts";
 import Config from "../config.ts";
 
 export default class SecretsRepository {
-  public static async getSecretByKey(key: string) {
+  public static async getSecretByKey(chatId: number, key: string) {
     const query = await db
       .from(Config.SECRET_TABLENAME)
       .select()
+      .eq("chatId", chatId)
       .eq("key", key);
     if (query.error) throw query.error;
 
@@ -19,14 +20,14 @@ export default class SecretsRepository {
     }
   }
 
-  public static async insertSecret(key: string, value: string) {
+  public static async insertSecret(chatId: number, key: string, value: string) {
     // check if key already exists
-    const data = await this.getSecretByKey(key);
+    const data = await this.getSecretByKey(chatId, key);
 
     if (!data) {
       const result = await db
         .from(Config.SECRET_TABLENAME)
-        .insert({ key: key, value: value })
+        .insert({ chatId: chatId, key: key, value: value })
         .select();
       if (result.error) throw result.error;
 
@@ -39,14 +40,19 @@ export default class SecretsRepository {
     }
   }
 
-  public static async updateSecret(key: string, newValue: string) {
+  public static async updateSecret(
+    chatId: number,
+    key: string,
+    newValue: string
+  ) {
     // check if secret already exists
-    const data = await this.getSecretByKey(key);
+    const data = await this.getSecretByKey(chatId, key);
 
     if (data) {
       const result = await db
         .from(Config.SECRET_TABLENAME)
         .update({ value: newValue })
+        .eq("chatId", chatId)
         .eq("key", key)
         .select();
       if (result.error) throw result.error;
@@ -60,14 +66,15 @@ export default class SecretsRepository {
     }
   }
 
-  public static async deleteSecret(key: string) {
+  public static async deleteSecret(chatId: number, key: string) {
     // check if secret already exists
-    const data = await this.getSecretByKey(key);
+    const data = await this.getSecretByKey(chatId, key);
 
     if (data) {
       const result = await db
         .from(Config.SECRET_TABLENAME)
         .delete()
+        .eq("chatId", chatId)
         .eq("key", key);
       if (result.error) throw result.error;
 

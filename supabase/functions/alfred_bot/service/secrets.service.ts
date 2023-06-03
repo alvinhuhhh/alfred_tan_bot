@@ -1,4 +1,5 @@
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
+import ChatsRepository from "../repository/chats.repository.ts";
 import SecretsRepository from "../repository/secrets.repository.ts";
 import Config from "../config.ts";
 
@@ -21,14 +22,19 @@ export default class SecretsService {
   }
 
   public static async getWIFIPassword(ctx: MyContext): Promise<void> {
-    const data = await SecretsRepository.getSecretByKey(
-      Config.WIFI_PASSWORD_KEY
-    );
+    if (ctx.chat?.id) {
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-    if (data) {
-      this.replyWIFIPassword(ctx, data);
-    } else {
-      this.replyWIFIPasswordNotFound(ctx);
+      const data = await SecretsRepository.getSecretByKey(
+        ctx.chat.id,
+        Config.WIFI_PASSWORD_KEY
+      );
+
+      if (data) {
+        this.replyWIFIPassword(ctx, data);
+      } else {
+        this.replyWIFIPasswordNotFound(ctx);
+      }
     }
   }
 
@@ -36,32 +42,45 @@ export default class SecretsService {
     conversation: MyConversation,
     ctx: MyContext
   ): Promise<void> {
-    await ctx.reply("Okay, what is the WIFI password?");
-    const userMsg = await conversation.waitFor(":text");
+    if (ctx.chat?.id) {
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-    if (userMsg.update.message?.text) {
-      // update secret if key exists
-      let data = await SecretsRepository.updateSecret(
-        Config.WIFI_PASSWORD_KEY,
-        userMsg.update.message.text
-      );
+      await ctx.reply("Okay, what is the WIFI password?");
+      const userMsg = await conversation.waitFor(":text");
 
-      if (!data) {
-        // add new secret if key does not exist
-        data = await SecretsRepository.insertSecret(
+      if (userMsg.update.message?.text) {
+        // update secret if key exists
+        const data = await SecretsRepository.updateSecret(
+          ctx.chat.id,
           Config.WIFI_PASSWORD_KEY,
           userMsg.update.message.text
         );
-      }
 
-      ctx.reply("I'll remember it!");
-      return;
+        if (!data) {
+          // add new secret if key does not exist
+          await SecretsRepository.insertSecret(
+            ctx.chat.id,
+            Config.WIFI_PASSWORD_KEY,
+            userMsg.update.message.text
+          );
+        }
+
+        ctx.reply("I'll remember it!");
+        return;
+      }
     }
   }
 
   public static async removeWIFIPassword(ctx: MyContext) {
-    await SecretsRepository.deleteSecret(Config.WIFI_PASSWORD_KEY);
+    if (ctx.chat?.id) {
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-    ctx.reply("I forgot the WIFI password!");
+      await SecretsRepository.deleteSecret(
+        ctx.chat.id,
+        Config.WIFI_PASSWORD_KEY
+      );
+
+      ctx.reply("I forgot the WIFI password!");
+    }
   }
 }
