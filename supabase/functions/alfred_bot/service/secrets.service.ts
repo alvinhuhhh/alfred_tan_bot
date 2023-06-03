@@ -44,6 +44,7 @@ export default class SecretsService {
   ): Promise<void> {
     await ctx.reply("Okay, what is the WIFI password?");
     const userMsg = await conversation.waitFor(":text");
+    console.log("Text received!");
 
     if (userMsg.update.message?.text) {
       if (userMsg.update.message.chat?.id) {
@@ -70,7 +71,6 @@ export default class SecretsService {
         }
 
         ctx.reply("I'll remember it!");
-        return;
       }
     }
   }
