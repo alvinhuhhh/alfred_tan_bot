@@ -128,7 +128,7 @@ bot.command("removecdcvoucherlink", async (ctx) => {
 
 const handleUpdate = webhookCallback(bot, "std/http");
 
-serve(async (req: Request) => {
+await serve(async (req: Request) => {
   try {
     const url = new URL(req.url);
     if (url.searchParams.get("secret") !== bot.token) {
