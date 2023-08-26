@@ -27,7 +27,7 @@ export default class DinnersService {
     const text =
       `\n<b>Dinner tonight:</b>\nDate: ${formattedDate}\n\n<u>YES:</u>\n` +
       yes +
-      `\n\n<u>NO:</u>\n` +
+      `\n<u>NO:</u>\n` +
       no;
 
     ctx.reply(text, {
@@ -88,8 +88,8 @@ export default class DinnersService {
         new Date()
       );
       if (existingDinner) {
-        let yes: Array<string> = [];
-        let no: Array<string> = [];
+        let yes: Array<string> = existingDinner.yes;
+        let no: Array<string> = existingDinner.no;
 
         if (!existingDinner.yes.includes(name)) {
           yes = [...existingDinner.yes, name];
@@ -123,8 +123,8 @@ export default class DinnersService {
         new Date()
       );
       if (existingDinner) {
-        let yes: Array<string> = [];
-        let no: Array<string> = [];
+        let yes: Array<string> = existingDinner.yes;
+        let no: Array<string> = existingDinner.no;
 
         if (!existingDinner.no.includes(name)) {
           no = [...existingDinner.no, name];
