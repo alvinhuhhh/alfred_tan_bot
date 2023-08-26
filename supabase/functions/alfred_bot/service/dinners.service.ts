@@ -14,19 +14,21 @@ export default class DinnersService {
 
   private static replyDinnerDetails(ctx: MyContext, data: any) {
     const formattedDate = data.date.split("-").reverse().join("/");
-    let attendees = "";
-    for (const attendee of data.attendees) {
-      attendees += `- ${attendee}
-`;
+    let yes = "";
+    let no = "";
+
+    for (const user of data.yes) {
+      yes += `- ${user}\n`;
+    }
+    for (const user of data.no) {
+      no += `- ${user}\n`;
     }
 
     const text =
-      `
-<b>Dinner tonight:</b>
-Date: ${formattedDate}
-
-Attendees:
-` + attendees;
+      `\n<b>Dinner tonight:</b>\nDate: ${formattedDate}\n\n<u>YES:</u>\n` +
+      yes +
+      `\n\n<u>NO:</u>\n` +
+      no;
 
     ctx.reply(text, {
       parse_mode: "HTML",
@@ -86,17 +88,23 @@ Attendees:
         new Date()
       );
       if (existingDinner) {
-        let result;
-        const attendees: Array<string> = existingDinner.attendees;
+        let yes: Array<string> = [];
+        let no: Array<string> = [];
 
-        if (!attendees.includes(name)) {
-          attendees.push(name);
-          result = await DinnersRepository.updateDinner(
-            ctx.chat.id,
-            new Date(),
-            attendees
-          );
+        if (!existingDinner.yes.includes(name)) {
+          yes = [...existingDinner.yes, name];
         }
+        if (no.includes(name)) {
+          no = existingDinner.no.filter((n: string) => n != name);
+        }
+
+        const result = await DinnersRepository.updateDinner(
+          ctx.chat.id,
+          new Date(),
+          yes,
+          no
+        );
+
         this.replyDinnerDetails(ctx, result);
       } else {
         this.replyDinnerNotFound(ctx);
@@ -115,22 +123,23 @@ Attendees:
         new Date()
       );
       if (existingDinner) {
-        let result;
-        const existingAttendees: Array<string> = existingDinner["attendees"];
+        let yes: Array<string> = [];
+        let no: Array<string> = [];
 
-        if (existingAttendees.includes(name)) {
-          const newAttendees: Array<string> = existingAttendees.filter(
-            (attendee: string) => {
-              return attendee != name;
-            }
-          );
-
-          result = await DinnersRepository.updateDinner(
-            ctx.chat.id,
-            new Date(),
-            newAttendees
-          );
+        if (!existingDinner.no.includes(name)) {
+          no = [...existingDinner.no, name];
         }
+        if (existingDinner.yes.includes(name)) {
+          yes = existingDinner.yes.filter((n: string) => n != name);
+        }
+
+        const result = await DinnersRepository.updateDinner(
+          ctx.chat.id,
+          new Date(),
+          yes,
+          no
+        );
+
         this.replyDinnerDetails(ctx, result);
       } else {
         this.replyDinnerNotFound(ctx);
