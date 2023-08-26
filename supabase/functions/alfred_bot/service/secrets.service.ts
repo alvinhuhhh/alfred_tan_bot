@@ -15,7 +15,7 @@ export default class SecretsService {
   );
 
   private static replyWIFIPassword(ctx: MyContext, data: any) {
-    const text = `Here's the WIFI password: ${data.value}`;
+    const text = `${data.value}`;
     ctx.reply(text);
     return;
   }
@@ -27,8 +27,7 @@ export default class SecretsService {
   }
 
   private static replyVoucherLink(ctx: MyContext, data: any) {
-    const text = `Here's the link for CDC Vouchers: 
-${data.value}`;
+    const text = `Here's the link for CDC Vouchers:\n${data.value}`;
     ctx.reply(text);
     return;
   }
