@@ -59,7 +59,7 @@ export default class ChatsRepository {
       console.log(`[updateChat] chat updated for id: ${id}`);
       return queryData;
     } else {
-      console.log(`[updateChat] chat does not exist for id: ${id}`);
+      console.error(`[updateChat] chat does not exist for id: ${id}`);
       return null;
     }
   }

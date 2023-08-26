@@ -62,7 +62,7 @@ export default class SecretsRepository {
       console.log(`[updateSecret] secret updated for key: ${key}`);
       return queryData;
     } else {
-      console.log(`[updateSecret] secret does not exist for key: ${key}`);
+      console.error(`[updateSecret] secret does not exist for key: ${key}`);
       return null;
     }
   }

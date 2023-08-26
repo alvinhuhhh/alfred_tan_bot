@@ -71,7 +71,7 @@ export default class DinnersRepository {
       );
       return queryData;
     } else {
-      console.log(
+      console.error(
         `[updateDinner] dinner does not exist for date: ${
           date.toISOString().split("T")[0]
         }`
