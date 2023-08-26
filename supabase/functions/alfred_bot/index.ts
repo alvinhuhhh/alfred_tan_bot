@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { Application } from "https://deno.land/x/oak@v12.6.0/mod.ts";
 import {
   Bot,
   webhookCallback,
@@ -126,16 +127,20 @@ bot.command("removecdcvoucherlink", async (ctx) => {
   await SecretsService.removeVoucherLink(ctx);
 });
 
-const handleUpdate = webhookCallback(bot, "std/http");
+// const handleUpdate = webhookCallback(bot, "std/http");
 
-await serve(async (req: Request) => {
-  try {
-    const url = new URL(req.url);
-    if (url.searchParams.get("secret") !== bot.token) {
-      return new Response("not allowed", { status: 405 });
-    }
-    return await handleUpdate(req);
-  } catch (err) {
-    console.error(err);
-  }
-});
+// await serve(async (req: Request) => {
+//   try {
+//     const url = new URL(req.url);
+//     if (url.searchParams.get("secret") !== bot.token) {
+//       return new Response("not allowed", { status: 405 });
+//     }
+//     return await handleUpdate(req);
+//   } catch (err) {
+//     console.error(err);
+//   }
+// });
+
+// Start webhookCallback
+const app = new Application();
+app.use(webhookCallback(bot, "oak"));
