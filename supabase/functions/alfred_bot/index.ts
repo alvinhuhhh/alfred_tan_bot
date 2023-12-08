@@ -76,11 +76,11 @@ bot.callbackQuery("get-wifi-password-callback", async (ctx) => {
 // Handle the /setwifipassword command
 bot.command("setwifipassword", async (ctx) => {
   console.debug(ctx);
-  await ctx.conversation.enter("setWIFIPassword");
+  // await ctx.conversation.enter("setWIFIPassword");
 });
 bot.callbackQuery("set-wifi-password-callback", async (ctx) => {
   console.debug(ctx);
-  await ctx.conversation.enter("setWIFIPassword");
+  // await ctx.conversation.enter("setWIFIPassword");
 });
 
 // Handle the /removewifipassword command
@@ -102,11 +102,11 @@ bot.callbackQuery("get-voucher-link-callback", async (ctx) => {
 // Handle the /setcdcvoucherlink command
 bot.command("setcdcvoucherlink", async (ctx) => {
   console.debug(ctx);
-  await ctx.conversation.enter("setVoucherLink");
+  // await ctx.conversation.enter("setVoucherLink");
 });
 bot.callbackQuery("set-voucher-link-callback", async (ctx) => {
   console.debug(ctx);
-  await ctx.conversation.enter("setVoucherLink");
+  // await ctx.conversation.enter("setVoucherLink");
 });
 
 // Handle the /removecdcvoucherlink command

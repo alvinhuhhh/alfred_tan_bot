@@ -184,61 +184,61 @@ export default class SecretsService {
     }
   }
 
-  public registerBotCommands() {
-    // Register conversations
-    this.bot.use(createConversation(this.setWIFIPassword, "setWIFIPassword"));
-    this.bot.use(createConversation(this.setVoucherLink, "setVoucherLink"));
+  // public registerBotCommands() {
+  //   // Register conversations
+  //   this.bot.use(createConversation(this.setWIFIPassword, "setWIFIPassword"));
+  //   this.bot.use(createConversation(this.setVoucherLink, "setVoucherLink"));
 
-    // Handle the /getwifipassword command
-    this.bot.command("getwifipassword", async (ctx) => {
-      console.debug(ctx);
-      await this.getWIFIPassword(ctx);
-    });
-    this.bot.callbackQuery("get-wifi-password-callback", async (ctx) => {
-      console.debug(ctx);
-      await this.getWIFIPassword(ctx);
-    });
+  //   // Handle the /getwifipassword command
+  //   this.bot.command("getwifipassword", async (ctx) => {
+  //     console.debug(ctx);
+  //     await this.getWIFIPassword(ctx);
+  //   });
+  //   this.bot.callbackQuery("get-wifi-password-callback", async (ctx) => {
+  //     console.debug(ctx);
+  //     await this.getWIFIPassword(ctx);
+  //   });
 
-    // Handle the /setwifipassword command
-    this.bot.command("setwifipassword", async (ctx) => {
-      console.debug(ctx);
-      await ctx.conversation.enter("setWIFIPassword");
-    });
-    this.bot.callbackQuery("set-wifi-password-callback", async (ctx) => {
-      console.debug(ctx);
-      await ctx.conversation.enter("setWIFIPassword");
-    });
+  //   // Handle the /setwifipassword command
+  //   this.bot.command("setwifipassword", async (ctx) => {
+  //     console.debug(ctx);
+  //     await ctx.conversation.enter("setWIFIPassword");
+  //   });
+  //   this.bot.callbackQuery("set-wifi-password-callback", async (ctx) => {
+  //     console.debug(ctx);
+  //     await ctx.conversation.enter("setWIFIPassword");
+  //   });
 
-    // Handle the /removewifipassword command
-    this.bot.command("removewifipassword", async (ctx) => {
-      console.debug(ctx);
-      await this.removeWIFIPassword(ctx);
-    });
+  //   // Handle the /removewifipassword command
+  //   this.bot.command("removewifipassword", async (ctx) => {
+  //     console.debug(ctx);
+  //     await this.removeWIFIPassword(ctx);
+  //   });
 
-    // Handle the /getcdcvouchers command
-    this.bot.command("getcdcvouchers", async (ctx) => {
-      console.debug(ctx);
-      await this.getVoucherLink(ctx);
-    });
-    this.bot.callbackQuery("get-voucher-link-callback", async (ctx) => {
-      console.debug(ctx);
-      await this.getVoucherLink(ctx);
-    });
+  //   // Handle the /getcdcvouchers command
+  //   this.bot.command("getcdcvouchers", async (ctx) => {
+  //     console.debug(ctx);
+  //     await this.getVoucherLink(ctx);
+  //   });
+  //   this.bot.callbackQuery("get-voucher-link-callback", async (ctx) => {
+  //     console.debug(ctx);
+  //     await this.getVoucherLink(ctx);
+  //   });
 
-    // Handle the /setcdcvoucherlink command
-    this.bot.command("setcdcvoucherlink", async (ctx) => {
-      console.debug(ctx);
-      await ctx.conversation.enter("setVoucherLink");
-    });
-    this.bot.callbackQuery("set-voucher-link-callback", async (ctx) => {
-      console.debug(ctx);
-      await ctx.conversation.enter("setVoucherLink");
-    });
+  //   // Handle the /setcdcvoucherlink command
+  //   this.bot.command("setcdcvoucherlink", async (ctx) => {
+  //     console.debug(ctx);
+  //     await ctx.conversation.enter("setVoucherLink");
+  //   });
+  //   this.bot.callbackQuery("set-voucher-link-callback", async (ctx) => {
+  //     console.debug(ctx);
+  //     await ctx.conversation.enter("setVoucherLink");
+  //   });
 
-    // Handle the /removecdcvoucherlink command
-    this.bot.command("removecdcvoucherlink", async (ctx) => {
-      console.debug(ctx);
-      await this.removeVoucherLink(ctx);
-    });
-  }
+  //   // Handle the /removecdcvoucherlink command
+  //   this.bot.command("removecdcvoucherlink", async (ctx) => {
+  //     console.debug(ctx);
+  //     await this.removeVoucherLink(ctx);
+  //   });
+  // }
 }
