@@ -155,9 +155,15 @@ const handleUpdate = webhookCallback(bot, "std/http");
 await serve(async (req: Request) => {
   try {
     const url = new URL(req.url);
+
+    if (url.pathname === "cron-trigger") {
+      return new Response("Hello world!");
+    }
+
     if (url.searchParams.get("secret") !== bot.token) {
       return new Response("not allowed", { status: 405 });
     }
+
     return await handleUpdate(req);
   } catch (err) {
     console.error(err);
