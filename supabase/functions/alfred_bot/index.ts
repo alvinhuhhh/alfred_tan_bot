@@ -4,10 +4,7 @@ import {
   webhookCallback,
   session,
 } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
-import {
-  conversations,
-  createConversation,
-} from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
+import { conversations } from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
 
 import ChatsRepository from "./repository/chats.repository.ts";
 import DinnersRepository from "./repository/dinners.repository.ts";
@@ -62,8 +59,6 @@ const secretsService = new SecretsService(
   secretsRepository
 );
 secretsService.registerBotCommands();
-bot.use(createConversation(secretsService.setWIFIPassword));
-bot.use(createConversation(secretsService.setVoucherLink));
 
 // Scheduler service
 const cronService = new CronService(bot, dinnersService);
