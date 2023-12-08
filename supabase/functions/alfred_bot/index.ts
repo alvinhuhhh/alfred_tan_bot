@@ -156,7 +156,7 @@ await serve(async (req: Request) => {
   try {
     const url = new URL(req.url);
 
-    if (url.pathname === "cron-trigger") {
+    if (url.pathname === "/cron-trigger") {
       return new Response("Hello world!");
     }
 
