@@ -31,7 +31,7 @@ export default class DinnersRepository {
     if (!data) {
       const result = await db
         .from(Config.DINNER_TABLENAME)
-        .insert({ date: date, yes: [name], no: [], chatId: chatId })
+        .insert({ date: date, yes: name ? [name] : [], no: [], chatId: chatId })
         .select();
       if (result.error) throw result.error;
 
