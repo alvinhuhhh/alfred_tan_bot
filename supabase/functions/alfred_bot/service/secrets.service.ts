@@ -223,11 +223,11 @@ export default class SecretsService {
     // Handle the /setcdcvoucherlink command
     this.bot.command("setcdcvoucherlink", async (ctx) => {
       console.debug(ctx);
-      await ctx.conversation.enter("setVoucherLink");
+      // await ctx.conversation.enter("setVoucherLink");
     });
     this.bot.callbackQuery("set-voucher-link-callback", async (ctx) => {
       console.debug(ctx);
-      await ctx.conversation.enter("setVoucherLink");
+      // await ctx.conversation.enter("setVoucherLink");
     });
 
     // Handle the /removecdcvoucherlink command
