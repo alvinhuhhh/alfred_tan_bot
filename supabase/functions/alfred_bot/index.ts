@@ -9,7 +9,6 @@ import {
   createConversation,
 } from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
 
-// Import services
 import ChatsService from "./service/chats.service.ts";
 import DinnersService from "./service/dinners.service.ts";
 import SecretsService from "./service/secrets.service.ts";
@@ -37,6 +36,7 @@ bot.use(conversations());
 bot.use(createConversation(SecretsService.setWIFIPassword));
 bot.use(createConversation(SecretsService.setVoucherLink));
 
+// Initialize services
 const cronService = new CronService(bot);
 
 // Basic commands
@@ -155,7 +155,7 @@ bot.command("removecdcvoucherlink", async (ctx) => {
 
 const handleUpdate = webhookCallback(bot, "std/http");
 
-await serve(async (req: Request) => {
+await serve(async (req: Request): Promise<Response> => {
   try {
     const url = new URL(req.url);
     console.debug(`${req.method} ${url.pathname}`);
@@ -179,5 +179,6 @@ await serve(async (req: Request) => {
     return await handleUpdate(req);
   } catch (err) {
     console.error(err);
+    return new Response(err, { status: 500 });
   }
 });
