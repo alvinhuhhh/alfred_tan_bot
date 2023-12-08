@@ -13,6 +13,7 @@ import {
 import ChatsService from "./service/chats.service.ts";
 import DinnersService from "./service/dinners.service.ts";
 import SecretsService from "./service/secrets.service.ts";
+import CronService from "./service/cron.service.ts";
 
 // Create an instance of the Bot class
 const token = Deno.env.get("BOT_TOKEN");
@@ -35,6 +36,8 @@ bot.use(conversations());
 // Register conversations
 bot.use(createConversation(SecretsService.setWIFIPassword));
 bot.use(createConversation(SecretsService.setVoucherLink));
+
+const cronService = new CronService(bot);
 
 // Basic commands
 bot.hears(/\balfred\b/i, async (ctx) => {
@@ -157,40 +160,22 @@ await serve(async (req: Request) => {
     const url = new URL(req.url);
     console.debug(`${req.method} ${url.pathname}`);
 
-    // Disallow methods
+    // Disallow HTTP methods
     if (req.method != "POST") {
       return new Response("Method not allowed", { status: 405 });
     }
 
-    // Path for cron schedule trigger
+    // Handle for cron schedule trigger
     if (url.pathname === "/alfred_bot/cron-trigger") {
-      if (!req.body) {
-        return new Response("Empty request body", { status: 400 });
-      }
-
-      const body: any = await req.json();
-      const message: string | undefined =
-        await DinnersService.startDinnerScheduled(body.chatId, body.chatType);
-
-      if (!message) {
-        return new Response("Unable to trigger start dinner", { status: 500 });
-      }
-
-      bot.api.sendMessage(body.chatId, message, {
-        parse_mode: "HTML",
-        reply_markup: DinnersService.joinLeaveDinnerButton,
-      });
-
-      return new Response("Start dinner triggered", { status: 201 });
+      await cronService.handleCronTrigger(req);
     }
 
-    // Normal Bot path
+    // Default handler
     if (url.searchParams.get("secret") !== bot.token) {
       return new Response("No Bot token received, unauthorized", {
         status: 401,
       });
     }
-
     return await handleUpdate(req);
   } catch (err) {
     console.error(err);
