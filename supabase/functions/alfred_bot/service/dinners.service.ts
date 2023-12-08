@@ -3,16 +3,16 @@ import ChatsRepository from "../repository/chats.repository.ts";
 import DinnersRepository from "../repository/dinners.repository.ts";
 
 export default class DinnersService {
-  static startDinnerButton = new InlineKeyboard().text(
+  static startDinnerButton: InlineKeyboard = new InlineKeyboard().text(
     "Start Dinner",
     "start-dinner-callback"
   );
 
-  static joinLeaveDinnerButton = new InlineKeyboard()
+  static joinLeaveDinnerButton: InlineKeyboard = new InlineKeyboard()
     .text("Leave Dinner", "leave-dinner-callback")
     .text("Join Dinner", "join-dinner-callback");
 
-  private static replyDinnerDetails(ctx: MyContext, data: any) {
+  public static parseDinnerDetails(data: any): string {
     const formattedDate = data.date.split("-").reverse().join("/");
     let yes = "";
     let no = "";
@@ -30,7 +30,11 @@ export default class DinnersService {
       `\n<u>NO:</u>\n` +
       no;
 
-    ctx.reply(text, {
+    return text;
+  }
+
+  private static replyDinnerDetails(ctx: MyContext, data: any) {
+    ctx.reply(this.parseDinnerDetails(data), {
       parse_mode: "HTML",
       reply_markup: this.joinLeaveDinnerButton,
     });
@@ -74,6 +78,19 @@ export default class DinnersService {
       );
 
       this.replyDinnerDetails(ctx, data);
+    }
+  }
+
+  public static async startDinnerScheduled(
+    chatId: number,
+    chatType: string
+  ): Promise<string | undefined> {
+    if (chatId) {
+      await ChatsRepository.insertChat(chatId, chatType);
+
+      const data = await DinnersRepository.insertDinner(chatId, new Date());
+
+      return this.parseDinnerDetails(data);
     }
   }
 

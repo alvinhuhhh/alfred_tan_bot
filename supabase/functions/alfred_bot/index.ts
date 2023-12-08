@@ -164,7 +164,13 @@ await serve(async (req: Request) => {
 
     // Path for cron schedule trigger
     if (url.pathname === "/alfred_bot/cron-trigger") {
-      return new Response("Hello world!");
+      console.log(req.body);
+
+      if (false) {
+        return new Response("Unable to trigger start dinner", { status: 500 });
+      }
+
+      return new Response("Start dinner triggerred", { status: 201 });
     }
 
     // Normal Bot path

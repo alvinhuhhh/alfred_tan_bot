@@ -24,7 +24,7 @@ export default class DinnersRepository {
     }
   }
 
-  public static async insertDinner(chatId: number, date: Date, name: string) {
+  public static async insertDinner(chatId: number, date: Date, name?: string) {
     // check if dinner already exists
     const data = await this.getDinnerByDate(chatId, date);
 
