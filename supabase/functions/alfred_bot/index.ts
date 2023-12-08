@@ -157,7 +157,7 @@ await serve(async (req: Request) => {
     const url = new URL(req.url);
     console.debug(`${req.method} ${url.pathname}`);
 
-    if (url.pathname === "/functions/v1/alfred_bot/cron-trigger") {
+    if (url.pathname === "/alfred_bot/cron-trigger") {
       return new Response("Hello world!");
     }
 
