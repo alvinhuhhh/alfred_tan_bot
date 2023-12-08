@@ -157,12 +157,21 @@ await serve(async (req: Request) => {
     const url = new URL(req.url);
     console.debug(`${req.method} ${url.pathname}`);
 
+    // Disallow methods
+    if (req.method != "POST") {
+      return new Response("Method not allowed", { status: 405 });
+    }
+
+    // Path for cron schedule trigger
     if (url.pathname === "/alfred_bot/cron-trigger") {
       return new Response("Hello world!");
     }
 
+    // Normal Bot path
     if (url.searchParams.get("secret") !== bot.token) {
-      return new Response("not allowed", { status: 405 });
+      return new Response("No Bot token received, unauthorized", {
+        status: 401,
+      });
     }
 
     return await handleUpdate(req);
