@@ -165,9 +165,9 @@ await serve(async (req: Request) => {
       return new Response("Method not allowed", { status: 405 });
     }
 
-    // Handle for cron schedule trigger
+    // Handler for cron schedule trigger
     if (url.pathname === "/alfred_bot/cron-trigger") {
-      await cronService.handleCronTrigger(req);
+      return await cronService.handleCronTrigger(req);
     }
 
     // Default handler
