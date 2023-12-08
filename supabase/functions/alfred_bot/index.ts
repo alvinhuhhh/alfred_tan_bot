@@ -168,14 +168,20 @@ await serve(async (req: Request) => {
         return new Response("Empty request body", { status: 400 });
       }
 
-      const body = await req.text();
-      console.log(body);
+      const body: any = await req.json();
+      const message: string | undefined =
+        await DinnersService.startDinnerScheduled(body.chatId, body.chatType);
 
-      if (false) {
+      if (!message) {
         return new Response("Unable to trigger start dinner", { status: 500 });
       }
 
-      return new Response("Start dinner triggerred", { status: 201 });
+      bot.api.sendMessage(body.chatId, message, {
+        parse_mode: "HTML",
+        reply_markup: DinnersService.joinLeaveDinnerButton,
+      });
+
+      return new Response("Start dinner triggered", { status: 201 });
     }
 
     // Normal Bot path

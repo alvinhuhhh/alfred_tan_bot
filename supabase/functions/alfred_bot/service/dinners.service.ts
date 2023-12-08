@@ -3,12 +3,12 @@ import ChatsRepository from "../repository/chats.repository.ts";
 import DinnersRepository from "../repository/dinners.repository.ts";
 
 export default class DinnersService {
-  static startDinnerButton: InlineKeyboard = new InlineKeyboard().text(
+  public static startDinnerButton: InlineKeyboard = new InlineKeyboard().text(
     "Start Dinner",
     "start-dinner-callback"
   );
 
-  static joinLeaveDinnerButton: InlineKeyboard = new InlineKeyboard()
+  public static joinLeaveDinnerButton: InlineKeyboard = new InlineKeyboard()
     .text("Leave Dinner", "leave-dinner-callback")
     .text("Join Dinner", "join-dinner-callback");
 
