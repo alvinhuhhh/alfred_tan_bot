@@ -1,4 +1,5 @@
 import { Bot } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
+import { createConversation } from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 import ChatsRepository from "../repository/chats.repository.ts";
 import SecretsRepository from "../repository/secrets.repository.ts";
@@ -184,6 +185,10 @@ export default class SecretsService {
   }
 
   public registerBotCommands() {
+    // Register conversations
+    this.bot.use(createConversation(this.setWIFIPassword, "setWIFIPassword"));
+    this.bot.use(createConversation(this.setVoucherLink, "setVoucherLink"));
+
     // Handle the /getwifipassword command
     this.bot.command("getwifipassword", async (ctx) => {
       console.debug(ctx);
@@ -223,11 +228,11 @@ export default class SecretsService {
     // Handle the /setcdcvoucherlink command
     this.bot.command("setcdcvoucherlink", async (ctx) => {
       console.debug(ctx);
-      // await ctx.conversation.enter("setVoucherLink");
+      await ctx.conversation.enter("setVoucherLink");
     });
     this.bot.callbackQuery("set-voucher-link-callback", async (ctx) => {
       console.debug(ctx);
-      // await ctx.conversation.enter("setVoucherLink");
+      await ctx.conversation.enter("setVoucherLink");
     });
 
     // Handle the /removecdcvoucherlink command
