@@ -8,9 +8,11 @@ type RequestBody = {
 
 export default class CronService {
   bot: Bot<MyContext>;
+  dinnersService: DinnersService;
 
-  constructor(bot: Bot<MyContext>) {
+  constructor(bot: Bot<MyContext>, dinnersService: DinnersService) {
     this.bot = bot;
+    this.dinnersService = dinnersService;
   }
 
   public async handleCronTrigger(req: Request): Promise<Response> {
@@ -20,7 +22,10 @@ export default class CronService {
 
     const body: RequestBody = await req.json();
     const message: string | undefined =
-      await DinnersService.startDinnerScheduled(body.chatId, body.chatType);
+      await this.dinnersService.startDinnerScheduled(
+        body.chatId,
+        body.chatType
+      );
 
     if (!message) {
       return new Response("Unable to trigger start dinner", { status: 500 });
@@ -28,7 +33,7 @@ export default class CronService {
 
     this.bot.api.sendMessage(body.chatId, message, {
       parse_mode: "HTML",
-      reply_markup: DinnersService.joinLeaveDinnerButton,
+      reply_markup: this.dinnersService.joinLeaveDinnerButton,
     });
 
     return new Response("Start dinner triggered", { status: 201 });

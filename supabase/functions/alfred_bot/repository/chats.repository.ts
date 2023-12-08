@@ -3,7 +3,7 @@ import Config from "../config.ts";
 import { ChatType } from "../enum/chatType.enum.ts";
 
 export default class ChatsRepository {
-  public static async getChatById(id: number) {
+  public async getChatById(id: number) {
     const query = await db.from(Config.CHAT_TABLENAME).select().eq("id", id);
     if (query.error) throw query.error;
 
@@ -17,7 +17,7 @@ export default class ChatsRepository {
     }
   }
 
-  public static async insertChat(id: number, type: string) {
+  public async insertChat(id: number, type: string) {
     // check if chat already exists
     const data = await this.getChatById(id);
 
@@ -40,7 +40,7 @@ export default class ChatsRepository {
     }
   }
 
-  public static async updateChat(id: number, type: string) {
+  public async updateChat(id: number, type: string) {
     // check if chat already exists
     const data = await this.getChatById(id);
 
@@ -64,7 +64,7 @@ export default class ChatsRepository {
     }
   }
 
-  public static async deleteChat(id: number) {
+  public async deleteChat(id: number) {
     // check if chat already exists
     const data = await this.getChatById(id);
 

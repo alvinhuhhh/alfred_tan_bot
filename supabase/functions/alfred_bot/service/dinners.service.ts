@@ -1,18 +1,33 @@
+import { Bot } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 import ChatsRepository from "../repository/chats.repository.ts";
 import DinnersRepository from "../repository/dinners.repository.ts";
 
 export default class DinnersService {
-  public static startDinnerButton: InlineKeyboard = new InlineKeyboard().text(
+  bot: Bot<MyContext>;
+  chatsRepository: ChatsRepository;
+  dinnersRepository: DinnersRepository;
+
+  constructor(
+    bot: Bot<MyContext>,
+    chatsRepository: ChatsRepository,
+    dinnersRepository: DinnersRepository
+  ) {
+    this.bot = bot;
+    this.chatsRepository = chatsRepository;
+    this.dinnersRepository = dinnersRepository;
+  }
+
+  public startDinnerButton: InlineKeyboard = new InlineKeyboard().text(
     "Start Dinner",
     "start-dinner-callback"
   );
 
-  public static joinLeaveDinnerButton: InlineKeyboard = new InlineKeyboard()
+  public joinLeaveDinnerButton: InlineKeyboard = new InlineKeyboard()
     .text("Leave Dinner", "leave-dinner-callback")
     .text("Join Dinner", "join-dinner-callback");
 
-  public static parseDinnerDetails(data: any): string {
+  public parseDinnerDetails(data: any): string {
     const formattedDate = data.date.split("-").reverse().join("/");
     let yes = "";
     let no = "";
@@ -33,7 +48,7 @@ export default class DinnersService {
     return text;
   }
 
-  private static replyDinnerDetails(ctx: MyContext, data: any) {
+  private replyDinnerDetails(ctx: MyContext, data: any): void {
     ctx.reply(this.parseDinnerDetails(data), {
       parse_mode: "HTML",
       reply_markup: this.joinLeaveDinnerButton,
@@ -41,18 +56,18 @@ export default class DinnersService {
     return;
   }
 
-  private static replyDinnerNotFound(ctx: MyContext) {
+  private replyDinnerNotFound(ctx: MyContext): void {
     ctx.reply("Dinner not started for tonight. Start one now?", {
       reply_markup: this.startDinnerButton,
     });
     return;
   }
 
-  public static async getDinner(ctx: MyContext): Promise<void> {
+  public async getDinner(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-      const data = await DinnersRepository.getDinnerByDate(
+      const data = await this.dinnersRepository.getDinnerByDate(
         ctx.chat.id,
         new Date()
       );
@@ -65,13 +80,13 @@ export default class DinnersService {
     }
   }
 
-  public static async startDinner(ctx: MyContext): Promise<void> {
+  public async startDinner(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
       const name: string = ctx.from?.first_name ?? "";
 
-      const data = await DinnersRepository.insertDinner(
+      const data = await this.dinnersRepository.insertDinner(
         ctx.chat.id,
         new Date(),
         name
@@ -81,26 +96,24 @@ export default class DinnersService {
     }
   }
 
-  public static async startDinnerScheduled(
+  public async startDinnerScheduled(
     chatId: number,
     chatType: string
-  ): Promise<string | undefined> {
-    if (chatId) {
-      await ChatsRepository.insertChat(chatId, chatType);
+  ): Promise<string> {
+    await this.chatsRepository.insertChat(chatId, chatType);
 
-      const data = await DinnersRepository.insertDinner(chatId, new Date());
+    const data = await this.dinnersRepository.insertDinner(chatId, new Date());
 
-      return this.parseDinnerDetails(data);
-    }
+    return this.parseDinnerDetails(data);
   }
 
-  public static async joinDinner(ctx: MyContext): Promise<void> {
+  public async joinDinner(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
       const name: string = ctx.from?.first_name ?? "";
 
-      const existingDinner = await DinnersRepository.getDinnerByDate(
+      const existingDinner = await this.dinnersRepository.getDinnerByDate(
         ctx.chat.id,
         new Date()
       );
@@ -115,7 +128,7 @@ export default class DinnersService {
           no = existingDinner.no.filter((n: string) => n != name);
         }
 
-        const result = await DinnersRepository.updateDinner(
+        const result = await this.dinnersRepository.updateDinner(
           ctx.chat.id,
           new Date(),
           yes,
@@ -129,13 +142,13 @@ export default class DinnersService {
     }
   }
 
-  public static async leaveDinner(ctx: MyContext): Promise<void> {
+  public async leaveDinner(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
       const name: string = ctx.from?.first_name ?? "";
 
-      const existingDinner = await DinnersRepository.getDinnerByDate(
+      const existingDinner = await this.dinnersRepository.getDinnerByDate(
         ctx.chat.id,
         new Date()
       );
@@ -150,7 +163,7 @@ export default class DinnersService {
           yes = existingDinner.yes.filter((n: string) => n != name);
         }
 
-        const result = await DinnersRepository.updateDinner(
+        const result = await this.dinnersRepository.updateDinner(
           ctx.chat.id,
           new Date(),
           yes,
@@ -164,13 +177,61 @@ export default class DinnersService {
     }
   }
 
-  public static async endDinner(ctx: MyContext): Promise<void> {
+  public async endDinner(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-      await DinnersRepository.deleteDinner(ctx.chat.id, new Date());
+      await this.dinnersRepository.deleteDinner(ctx.chat.id, new Date());
 
       ctx.reply("No more dinner for tonight!");
     }
+  }
+
+  public registerBotCommands(): void {
+    // Handle the /getdinner command
+    this.bot.command("getdinner", async (ctx) => {
+      console.debug(ctx);
+      await this.getDinner(ctx);
+    });
+    this.bot.callbackQuery("get-dinner-callback", async (ctx) => {
+      console.debug(ctx);
+      await this.getDinner(ctx);
+    });
+
+    // Handle the /startdinner command
+    this.bot.command("startdinner", async (ctx) => {
+      console.debug(ctx);
+      await this.startDinner(ctx);
+    });
+    this.bot.callbackQuery("start-dinner-callback", async (ctx) => {
+      console.debug(ctx);
+      await this.startDinner(ctx);
+    });
+
+    // Handle the /joindinner command
+    this.bot.command("joindinner", async (ctx) => {
+      console.debug(ctx);
+      await this.joinDinner(ctx);
+    });
+    this.bot.callbackQuery("join-dinner-callback", async (ctx) => {
+      console.debug(ctx);
+      await this.joinDinner(ctx);
+    });
+
+    // Handle the /leavedinner command
+    this.bot.command("leavedinner", async (ctx) => {
+      console.debug(ctx);
+      await this.leaveDinner(ctx);
+    });
+    this.bot.callbackQuery("leave-dinner-callback", async (ctx) => {
+      console.debug(ctx);
+      await this.leaveDinner(ctx);
+    });
+
+    // Handle the /enddinner command
+    this.bot.command("enddinner", async (ctx) => {
+      console.debug(ctx);
+      await this.endDinner(ctx);
+    });
   }
 }

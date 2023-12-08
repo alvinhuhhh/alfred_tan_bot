@@ -2,7 +2,7 @@ import db from "./db.repository.ts";
 import Config from "../config.ts";
 
 export default class DinnersRepository {
-  public static async getDinnerByDate(chatId: number, date: Date) {
+  public async getDinnerByDate(chatId: number, date: Date) {
     const ISODate: string = date.toISOString().split("T")[0];
 
     const query = await db
@@ -24,7 +24,7 @@ export default class DinnersRepository {
     }
   }
 
-  public static async insertDinner(chatId: number, date: Date, name?: string) {
+  public async insertDinner(chatId: number, date: Date, name?: string) {
     // check if dinner already exists
     const data = await this.getDinnerByDate(chatId, date);
 
@@ -44,7 +44,7 @@ export default class DinnersRepository {
     }
   }
 
-  public static async updateDinner(
+  public async updateDinner(
     chatId: number,
     date: Date,
     yes: Array<string>,
@@ -80,7 +80,7 @@ export default class DinnersRepository {
     }
   }
 
-  public static async deleteDinner(chatId: number, date: Date) {
+  public async deleteDinner(chatId: number, date: Date) {
     const ISODate: string = date.toISOString().split("T")[0];
 
     // check if dinner already exists

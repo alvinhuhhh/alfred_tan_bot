@@ -9,6 +9,11 @@ import {
   createConversation,
 } from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
 
+import ChatsRepository from "./repository/chats.repository.ts";
+import DinnersRepository from "./repository/dinners.repository.ts";
+import SecretsRepository from "./repository/secrets.repository.ts";
+
+import BasicService from "./service/basic.service.ts";
 import ChatsService from "./service/chats.service.ts";
 import DinnersService from "./service/dinners.service.ts";
 import SecretsService from "./service/secrets.service.ts";
@@ -32,126 +37,36 @@ bot.use(
 // Install the conversations plugin
 bot.use(conversations());
 
-// Register conversations
-bot.use(createConversation(SecretsService.setWIFIPassword));
-bot.use(createConversation(SecretsService.setVoucherLink));
-
-// Initialize services
-const cronService = new CronService(bot);
+// Initialize repositories
+const chatsRepository = new ChatsRepository();
+const dinnersRepository = new DinnersRepository();
+const secretsRepository = new SecretsRepository();
 
 // Basic commands
-bot.hears(/\balfred\b/i, async (ctx) => {
-  console.debug(ctx);
-  await ChatsService.replyName(ctx);
-});
+const chatsService = new ChatsService(chatsRepository);
+const basicService = new BasicService(bot, chatsService);
+basicService.registerBotCommands();
 
-bot.command("start", async (ctx) => {
-  console.debug(ctx);
-  await ChatsService.startChat(ctx);
-});
+// Dinners
+const dinnersService = new DinnersService(
+  bot,
+  chatsRepository,
+  dinnersRepository
+);
+dinnersService.registerBotCommands();
 
-bot.command("hello", async (ctx) => {
-  console.debug(ctx);
-  await ChatsService.replyHello(ctx);
-});
+// Secrets
+const secretsService = new SecretsService(
+  bot,
+  chatsRepository,
+  secretsRepository
+);
+secretsService.registerBotCommands();
+bot.use(createConversation(secretsService.setWIFIPassword));
+bot.use(createConversation(secretsService.setVoucherLink));
 
-// Handle the /getdinner command
-bot.command("getdinner", async (ctx) => {
-  console.debug(ctx);
-  await DinnersService.getDinner(ctx);
-});
-bot.callbackQuery("get-dinner-callback", async (ctx) => {
-  console.debug(ctx);
-  await DinnersService.getDinner(ctx);
-});
-
-// Handle the /startdinner command
-bot.command("startdinner", async (ctx) => {
-  console.debug(ctx);
-  await DinnersService.startDinner(ctx);
-});
-bot.callbackQuery("start-dinner-callback", async (ctx) => {
-  console.debug(ctx);
-  await DinnersService.startDinner(ctx);
-});
-
-// Handle the /joindinner command
-bot.command("joindinner", async (ctx) => {
-  console.debug(ctx);
-  await DinnersService.joinDinner(ctx);
-});
-bot.callbackQuery("join-dinner-callback", async (ctx) => {
-  console.debug(ctx);
-  await DinnersService.joinDinner(ctx);
-});
-
-// Handle the /leavedinner command
-bot.command("leavedinner", async (ctx) => {
-  console.debug(ctx);
-  await DinnersService.leaveDinner(ctx);
-});
-bot.callbackQuery("leave-dinner-callback", async (ctx) => {
-  console.debug(ctx);
-  await DinnersService.leaveDinner(ctx);
-});
-
-// Handle the /enddinner command
-bot.command("enddinner", async (ctx) => {
-  console.debug(ctx);
-  await DinnersService.endDinner(ctx);
-});
-
-// Handle the /getwifipassword command
-bot.command("getwifipassword", async (ctx) => {
-  console.debug(ctx);
-  await SecretsService.getWIFIPassword(ctx);
-});
-bot.callbackQuery("get-wifi-password-callback", async (ctx) => {
-  console.debug(ctx);
-  await SecretsService.getWIFIPassword(ctx);
-});
-
-// Handle the /setwifipassword command
-bot.command("setwifipassword", async (ctx) => {
-  console.debug(ctx);
-  await ctx.conversation.enter("setWIFIPassword");
-});
-bot.callbackQuery("set-wifi-password-callback", async (ctx) => {
-  console.debug(ctx);
-  await ctx.conversation.enter("setWIFIPassword");
-});
-
-// Handle the /removewifipassword command
-bot.command("removewifipassword", async (ctx) => {
-  console.debug(ctx);
-  await SecretsService.removeWIFIPassword(ctx);
-});
-
-// Handle the /getcdcvouchers command
-bot.command("getcdcvouchers", async (ctx) => {
-  console.debug(ctx);
-  await SecretsService.getVoucherLink(ctx);
-});
-bot.callbackQuery("get-voucher-link-callback", async (ctx) => {
-  console.debug(ctx);
-  await SecretsService.getVoucherLink(ctx);
-});
-
-// Handle the /setcdcvoucherlink command
-bot.command("setcdcvoucherlink", async (ctx) => {
-  console.debug(ctx);
-  await ctx.conversation.enter("setVoucherLink");
-});
-bot.callbackQuery("set-voucher-link-callback", async (ctx) => {
-  console.debug(ctx);
-  await ctx.conversation.enter("setVoucherLink");
-});
-
-// Handle the /removecdcvoucherlink command
-bot.command("removecdcvoucherlink", async (ctx) => {
-  console.debug(ctx);
-  await SecretsService.removeVoucherLink(ctx);
-});
+// Scheduler service
+const cronService = new CronService(bot, dinnersService);
 
 const handleUpdate = webhookCallback(bot, "std/http");
 
