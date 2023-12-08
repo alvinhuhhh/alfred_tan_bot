@@ -164,7 +164,12 @@ await serve(async (req: Request) => {
 
     // Path for cron schedule trigger
     if (url.pathname === "/alfred_bot/cron-trigger") {
-      console.log(req.body);
+      if (!req.body) {
+        return new Response("Empty request body", { status: 400 });
+      }
+
+      const body = await req.text();
+      console.log(body);
 
       if (false) {
         return new Response("Unable to trigger start dinner", { status: 500 });
