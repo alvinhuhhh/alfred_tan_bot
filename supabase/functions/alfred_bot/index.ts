@@ -4,7 +4,10 @@ import {
   webhookCallback,
   session,
 } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
-import { conversations } from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
+import {
+  conversations,
+  createConversation,
+} from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
 
 import ChatsRepository from "./repository/chats.repository.ts";
 import DinnersRepository from "./repository/dinners.repository.ts";
@@ -56,7 +59,61 @@ const secretsService = new SecretsService(
   chatsRepository,
   secretsRepository
 );
-secretsService.registerBotCommands();
+// Register conversations
+bot.use(createConversation(secretsService.setWIFIPassword, "setWIFIPassword"));
+bot.use(createConversation(secretsService.setVoucherLink, "setVoucherLink"));
+
+// Handle the /getwifipassword command
+bot.command("getwifipassword", async (ctx) => {
+  console.debug(ctx);
+  await secretsService.getWIFIPassword(ctx);
+});
+bot.callbackQuery("get-wifi-password-callback", async (ctx) => {
+  console.debug(ctx);
+  await secretsService.getWIFIPassword(ctx);
+});
+
+// Handle the /setwifipassword command
+bot.command("setwifipassword", async (ctx) => {
+  console.debug(ctx);
+  await ctx.conversation.enter("setWIFIPassword");
+});
+bot.callbackQuery("set-wifi-password-callback", async (ctx) => {
+  console.debug(ctx);
+  await ctx.conversation.enter("setWIFIPassword");
+});
+
+// Handle the /removewifipassword command
+bot.command("removewifipassword", async (ctx) => {
+  console.debug(ctx);
+  await secretsService.removeWIFIPassword(ctx);
+});
+
+// Handle the /getcdcvouchers command
+bot.command("getcdcvouchers", async (ctx) => {
+  console.debug(ctx);
+  await secretsService.getVoucherLink(ctx);
+});
+bot.callbackQuery("get-voucher-link-callback", async (ctx) => {
+  console.debug(ctx);
+  await secretsService.getVoucherLink(ctx);
+});
+
+// Handle the /setcdcvoucherlink command
+bot.command("setcdcvoucherlink", async (ctx) => {
+  console.debug(ctx);
+  await ctx.conversation.enter("setVoucherLink");
+});
+bot.callbackQuery("set-voucher-link-callback", async (ctx) => {
+  console.debug(ctx);
+  await ctx.conversation.enter("setVoucherLink");
+});
+
+// Handle the /removecdcvoucherlink command
+bot.command("removecdcvoucherlink", async (ctx) => {
+  console.debug(ctx);
+  await secretsService.removeVoucherLink(ctx);
+});
 
 // Scheduler service
 const cronService = new CronService(bot, dinnersService);
