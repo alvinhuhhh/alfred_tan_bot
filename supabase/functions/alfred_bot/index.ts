@@ -155,8 +155,9 @@ const handleUpdate = webhookCallback(bot, "std/http");
 await serve(async (req: Request) => {
   try {
     const url = new URL(req.url);
+    console.debug(`${req.method} ${url.pathname}`);
 
-    if (url.pathname === "/cron-trigger") {
+    if (url.pathname === "/functions/v1/alfred_bot/cron-trigger") {
       return new Response("Hello world!");
     }
 
