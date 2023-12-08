@@ -4,13 +4,15 @@ import {
   webhookCallback,
   session,
 } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
-import { conversations } from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
+import {
+  conversations,
+  createConversation,
+} from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
 
 import ChatsRepository from "./repository/chats.repository.ts";
 import DinnersRepository from "./repository/dinners.repository.ts";
 import SecretsRepository from "./repository/secrets.repository.ts";
 
-import BasicService from "./service/basic.service.ts";
 import ChatsService from "./service/chats.service.ts";
 import DinnersService from "./service/dinners.service.ts";
 import SecretsService from "./service/secrets.service.ts";
@@ -40,9 +42,8 @@ const dinnersRepository = new DinnersRepository();
 const secretsRepository = new SecretsRepository();
 
 // Basic commands
-const chatsService = new ChatsService(chatsRepository);
-const basicService = new BasicService(bot, chatsService);
-basicService.registerBotCommands();
+const chatsService = new ChatsService(bot, chatsRepository);
+chatsService.registerBotCommands();
 
 // Dinners
 const dinnersService = new DinnersService(
@@ -58,6 +59,9 @@ const secretsService = new SecretsService(
   chatsRepository,
   secretsRepository
 );
+// Register conversations
+bot.use(createConversation(secretsService.setWIFIPassword));
+bot.use(createConversation(secretsService.setVoucherLink));
 secretsService.registerBotCommands();
 
 // Scheduler service

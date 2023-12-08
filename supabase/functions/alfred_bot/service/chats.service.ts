@@ -1,10 +1,13 @@
+import { Bot } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 import ChatsRepository from "../repository/chats.repository.ts";
 
 export default class ChatsService {
+  bot: Bot<MyContext>;
   chatsRepository: ChatsRepository;
 
-  constructor(chatsRepository: ChatsRepository) {
+  constructor(bot: Bot<MyContext>, chatsRepository: ChatsRepository) {
+    this.bot = bot;
     this.chatsRepository = chatsRepository;
   }
 
@@ -47,6 +50,23 @@ export default class ChatsService {
     ctx.reply("How can I help?", {
       reply_to_message_id: ctx.message?.message_id,
       reply_markup: this.commandCatalog,
+    });
+  }
+
+  public registerBotCommands(): void {
+    this.bot.hears(/\balfred\b/i, async (ctx) => {
+      console.debug(ctx);
+      await this.replyName(ctx);
+    });
+
+    this.bot.command("start", async (ctx) => {
+      console.debug(ctx);
+      await this.startChat(ctx);
+    });
+
+    this.bot.command("hello", async (ctx) => {
+      console.debug(ctx);
+      await this.replyHello(ctx);
     });
   }
 }
