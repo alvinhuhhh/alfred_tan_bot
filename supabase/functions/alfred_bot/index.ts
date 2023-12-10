@@ -137,6 +137,7 @@ bot.callbackQuery("get-wifi-password-callback", async (ctx: MyContext) => {
 });
 
 // Handle the /setwifipassword command
+bot.use(createConversation(secretsService.setWIFIPassword));
 bot.command("setwifipassword", async (ctx: MyContext) => {
   console.debug(ctx);
   await ctx.conversation.enter("setWIFIPassword");
@@ -163,6 +164,7 @@ bot.callbackQuery("get-voucher-link-callback", async (ctx: MyContext) => {
 });
 
 // Handle the /setcdcvoucherlink command
+bot.use(createConversation(secretsService.setVoucherLink));
 bot.command("setcdcvoucherlink", async (ctx: MyContext) => {
   console.debug(ctx);
   await ctx.conversation.enter("setVoucherLink");
@@ -180,10 +182,6 @@ bot.command("removecdcvoucherlink", async (ctx: MyContext) => {
 
 // Cron
 const cronService = new CronService(bot, dinnersService);
-
-// Register conversations
-bot.use(createConversation(secretsService.setWIFIPassword));
-bot.use(createConversation(secretsService.setVoucherLink));
 
 await serve(async (req: Request): Promise<Response> => {
   try {
