@@ -1,5 +1,6 @@
 import { Bot } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
 import DinnersService from "../service/dinners.service.ts";
+import { BodyJson } from "https://deno.land/x/oak@v12.6.0/mod.ts";
 
 type RequestBody = {
   chatId: number;
@@ -15,12 +16,9 @@ export default class CronService {
     this.dinnersService = dinnersService;
   }
 
-  public async handleCronTrigger(req: Request): Promise<Response> {
-    if (!req.body) {
-      return new Response("Empty request body", { status: 400 });
-    }
+  public async handleCronTrigger(json: BodyJson): Promise<Response> {
+    const body: RequestBody = await json.value;
 
-    const body: RequestBody = await req.json();
     const message: string | undefined =
       await this.dinnersService.startDinnerScheduled(
         body.chatId,
