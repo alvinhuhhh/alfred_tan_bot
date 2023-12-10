@@ -1,124 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import {
-  Bot,
-  webhookCallback,
-  session,
-} from "https://deno.land/x/grammy@v1.16.1/mod.ts";
-import {
-  conversations,
-  createConversation,
-} from "https://deno.land/x/grammy_conversations@v1.1.1/mod.ts";
 
-import ChatsRepository from "./repository/chats.repository.ts";
-import DinnersRepository from "./repository/dinners.repository.ts";
-import SecretsRepository from "./repository/secrets.repository.ts";
+import Alfred from "./alfred.ts";
 
-import ChatsService from "./service/chats.service.ts";
-import DinnersService from "./service/dinners.service.ts";
-import SecretsService from "./service/secrets.service.ts";
-import CronService from "./service/cron.service.ts";
-
-// Create an instance of the Bot class
-const token = Deno.env.get("BOT_TOKEN");
-if (!token) throw new Error("BOT_TOKEN is unset");
-const bot = new Bot<MyContext>(token);
-
-// Install the session plugin
-bot.use(
-  session({
-    initial() {
-      // return empty object for now
-      return {};
-    },
-  })
-);
-
-// Install the conversations plugin
-bot.use(conversations());
-
-// Initialize repositories
-const chatsRepository = new ChatsRepository();
-const dinnersRepository = new DinnersRepository();
-const secretsRepository = new SecretsRepository();
-
-// Basic commands
-const chatsService = new ChatsService(bot, chatsRepository);
-chatsService.registerBotCommands();
-
-// Dinners
-const dinnersService = new DinnersService(
-  bot,
-  chatsRepository,
-  dinnersRepository
-);
-dinnersService.registerBotCommands();
-
-// Secrets
-const secretsService = new SecretsService(
-  bot,
-  chatsRepository,
-  secretsRepository
-);
-// Register conversations
-bot.use(createConversation(secretsService.setWIFIPassword, "setWIFIPassword"));
-bot.use(createConversation(secretsService.setVoucherLink, "setVoucherLink"));
-
-// Handle the /getwifipassword command
-bot.command("getwifipassword", async (ctx) => {
-  console.debug(ctx);
-  await secretsService.getWIFIPassword(ctx);
-});
-bot.callbackQuery("get-wifi-password-callback", async (ctx) => {
-  console.debug(ctx);
-  await secretsService.getWIFIPassword(ctx);
-});
-
-// Handle the /setwifipassword command
-bot.command("setwifipassword", async (ctx) => {
-  console.debug(ctx);
-  // await ctx.conversation.enter("setWIFIPassword");
-});
-bot.callbackQuery("set-wifi-password-callback", async (ctx) => {
-  console.debug(ctx);
-  // await ctx.conversation.enter("setWIFIPassword");
-});
-
-// Handle the /removewifipassword command
-bot.command("removewifipassword", async (ctx) => {
-  console.debug(ctx);
-  await secretsService.removeWIFIPassword(ctx);
-});
-
-// Handle the /getcdcvouchers command
-bot.command("getcdcvouchers", async (ctx) => {
-  console.debug(ctx);
-  await secretsService.getVoucherLink(ctx);
-});
-bot.callbackQuery("get-voucher-link-callback", async (ctx) => {
-  console.debug(ctx);
-  await secretsService.getVoucherLink(ctx);
-});
-
-// Handle the /setcdcvoucherlink command
-bot.command("setcdcvoucherlink", async (ctx) => {
-  console.debug(ctx);
-  // await ctx.conversation.enter("setVoucherLink");
-});
-bot.callbackQuery("set-voucher-link-callback", async (ctx) => {
-  console.debug(ctx);
-  // await ctx.conversation.enter("setVoucherLink");
-});
-
-// Handle the /removecdcvoucherlink command
-bot.command("removecdcvoucherlink", async (ctx) => {
-  console.debug(ctx);
-  await secretsService.removeVoucherLink(ctx);
-});
-
-// Scheduler service
-const cronService = new CronService(bot, dinnersService);
-
-const handleUpdate = webhookCallback(bot, "std/http");
+const alfred = new Alfred();
 
 await serve(async (req: Request): Promise<Response> => {
   try {
@@ -132,16 +16,16 @@ await serve(async (req: Request): Promise<Response> => {
 
     // Handler for cron schedule trigger
     if (url.pathname === "/alfred_bot/cron-trigger") {
-      return await cronService.handleCronTrigger(req);
+      return await alfred.cronService.handleCronTrigger(req);
     }
 
     // Default handler
-    if (url.searchParams.get("secret") !== bot.token) {
+    if (url.searchParams.get("secret") !== alfred.bot.token) {
       return new Response("No Bot token received, unauthorized", {
         status: 401,
       });
     }
-    return await handleUpdate(req);
+    return await alfred.handleUpdate(req);
   } catch (err) {
     console.error(err);
     return new Response(err, { status: 500 });
