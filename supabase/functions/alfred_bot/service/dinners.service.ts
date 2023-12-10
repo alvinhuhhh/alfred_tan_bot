@@ -189,47 +189,47 @@ export default class DinnersService {
 
   public registerBotCommands(): void {
     // Handle the /getdinner command
-    this.bot.command("getdinner", async (ctx) => {
+    this.bot.command("getdinner", async (ctx: MyContext) => {
       console.debug(ctx);
       await this.getDinner(ctx);
     });
-    this.bot.callbackQuery("get-dinner-callback", async (ctx) => {
+    this.bot.callbackQuery("get-dinner-callback", async (ctx: MyContext) => {
       console.debug(ctx);
       await this.getDinner(ctx);
     });
 
     // Handle the /startdinner command
-    this.bot.command("startdinner", async (ctx) => {
+    this.bot.command("startdinner", async (ctx: MyContext) => {
       console.debug(ctx);
       await this.startDinner(ctx);
     });
-    this.bot.callbackQuery("start-dinner-callback", async (ctx) => {
+    this.bot.callbackQuery("start-dinner-callback", async (ctx: MyContext) => {
       console.debug(ctx);
       await this.startDinner(ctx);
     });
 
     // Handle the /joindinner command
-    this.bot.command("joindinner", async (ctx) => {
+    this.bot.command("joindinner", async (ctx: MyContext) => {
       console.debug(ctx);
       await this.joinDinner(ctx);
     });
-    this.bot.callbackQuery("join-dinner-callback", async (ctx) => {
+    this.bot.callbackQuery("join-dinner-callback", async (ctx: MyContext) => {
       console.debug(ctx);
       await this.joinDinner(ctx);
     });
 
     // Handle the /leavedinner command
-    this.bot.command("leavedinner", async (ctx) => {
+    this.bot.command("leavedinner", async (ctx: MyContext) => {
       console.debug(ctx);
       await this.leaveDinner(ctx);
     });
-    this.bot.callbackQuery("leave-dinner-callback", async (ctx) => {
+    this.bot.callbackQuery("leave-dinner-callback", async (ctx: MyContext) => {
       console.debug(ctx);
       await this.leaveDinner(ctx);
     });
 
     // Handle the /enddinner command
-    this.bot.command("enddinner", async (ctx) => {
+    this.bot.command("enddinner", async (ctx: MyContext) => {
       console.debug(ctx);
       await this.endDinner(ctx);
     });
