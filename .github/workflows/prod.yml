@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      URL: https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/setWebhook?url=https://${{ secrets.SUPABASE_PROJECT_REF }}.functions.supabase.co/alfred_bot?secret=${{ secrets.BOT_TOKEN }}
+      URL: https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/setWebhook?url=https://${{ secrets.SUPABASE_PROJECT_REF }}.functions.supabase.co/functions/v1/alfred_bot?secret=${{ secrets.BOT_TOKEN }}
 
     steps:
       - run: curl ${{ env.URL }}
