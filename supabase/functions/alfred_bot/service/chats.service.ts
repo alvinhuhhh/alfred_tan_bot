@@ -57,26 +57,4 @@ export default class ChatsService {
     await ctx.conversation.exit();
     ctx.reply("Ended any conversation we were having.");
   }
-
-  public registerBotCommands(): void {
-    this.bot.hears(/\balfred\b/i, async (ctx: MyContext) => {
-      console.debug(ctx);
-      await this.replyName(ctx);
-    });
-
-    this.bot.command("start", async (ctx: MyContext) => {
-      console.debug(ctx);
-      await this.startChat(ctx);
-    });
-
-    this.bot.command("hello", async (ctx: MyContext) => {
-      console.debug(ctx);
-      await this.replyHello(ctx);
-    });
-
-    this.bot.command("cancel", async (ctx: MyContext) => {
-      console.debug(ctx);
-      await this.exitConversation(ctx);
-    });
-  }
 }
