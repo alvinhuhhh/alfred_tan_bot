@@ -1,4 +1,8 @@
-import { Application, BodyJson } from "https://deno.land/x/oak@v12.6.0/mod.ts";
+import {
+  Application,
+  Router,
+  BodyJson,
+} from "https://deno.land/x/oak@v12.6.0/mod.ts";
 import {
   Bot,
   webhookCallback,
@@ -184,68 +188,39 @@ bot.command("removecdcvoucherlink", async (ctx: MyContext) => {
 const cronService = new CronService(bot, dinnersService);
 
 // Create oak app
-const app: Application = new Application();
-
 const handleUpdate = webhookCallback(bot, "oak");
-app.use(async (ctx) => {
-  console.debug(`${ctx.request.method} ${ctx.request.url.pathname}`);
 
-  if (ctx.request.method != "POST") {
-    return new Response("Method not allowed", { status: 405 });
+const app: Application = new Application();
+const router: Router = new Router();
+
+router.get("/alfred_bot/ping", (ctx) => {
+  ctx.response.status = 200;
+});
+
+router.post("/alfred_bot/cron-trigger", async (ctx) => {
+  const requestBody: BodyJson = ctx.request.body({ type: "json" });
+
+  if (!requestBody) {
+    console.error("Empty request body");
+    return new Response("Empty request body", { status: 400 });
   }
 
-  try {
-    // Handler for cron schedule trigger
-    if (ctx.request.url.pathname === "/alfred_bot/cron-trigger") {
-      const requestBody: BodyJson = await ctx.request.body({ type: "json" });
-
-      if (!requestBody) {
-        console.error("Empty request body");
-        return new Response("Empty request body", { status: 400 });
-      }
-
-      return await cronService.handleCronTrigger(requestBody);
-    }
-
-    // Default handler
-    if (ctx.request.url.searchParams.get("secret") !== bot.token) {
-      return new Response("Wrong Bot token received, unauthorized", {
-        status: 401,
-      });
-    }
-    return await handleUpdate(ctx.request);
-  } catch (err) {
-    console.error(err);
-    return new Response(err, { status: 500 });
+  if (await cronService.handleCronTrigger(requestBody)) {
+    ctx.response.status = 201;
+  } else {
+    ctx.response.body = "Unable to trigger dinner";
+    ctx.response.status = 500;
   }
 });
 
+router.post("/alfred_bot", async (ctx) => {
+  if (ctx.request.url.searchParams.get("secret") !== bot.token) {
+    ctx.response.body = "Wrong Bot token received, unauthorized";
+    ctx.response.status = 401;
+    return;
+  }
+  return await handleUpdate(ctx);
+});
+
+app.use(router.routes());
 app.listen();
-
-// await serve(async (req: Request): Promise<Response> => {
-//   try {
-//     const url = new URL(req.url);
-//     console.debug(`${req.method} ${url.pathname}`);
-
-//     // Disallow HTTP methods
-//     if (req.method != "POST") {
-//       return new Response("Method not allowed", { status: 405 });
-//     }
-
-//     // Handler for cron schedule trigger
-//     if (url.pathname === "/alfred_bot/cron-trigger") {
-//       return await cronService.handleCronTrigger(req);
-//     }
-
-//     // Default handler
-//     if (url.searchParams.get("secret") !== bot.token) {
-//       return new Response("No Bot token received, unauthorized", {
-//         status: 401,
-//       });
-//     }
-//     return await handleUpdate(req);
-//   } catch (err) {
-//     console.error(err);
-//     return new Response(err, { status: 500 });
-//   }
-// });

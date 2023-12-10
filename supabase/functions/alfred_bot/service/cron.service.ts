@@ -1,6 +1,6 @@
 import { Bot } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
-import DinnersService from "../service/dinners.service.ts";
 import { BodyJson } from "https://deno.land/x/oak@v12.6.0/mod.ts";
+import DinnersService from "../service/dinners.service.ts";
 
 type RequestBody = {
   chatId: number;
@@ -16,7 +16,7 @@ export default class CronService {
     this.dinnersService = dinnersService;
   }
 
-  public async handleCronTrigger(json: BodyJson): Promise<Response> {
+  public async handleCronTrigger(json: BodyJson): Promise<boolean> {
     const body: RequestBody = await json.value;
 
     const message: string | undefined =
@@ -26,7 +26,7 @@ export default class CronService {
       );
 
     if (!message) {
-      return new Response("Unable to trigger start dinner", { status: 500 });
+      return false;
     }
 
     this.bot.api.sendMessage(body.chatId, message, {
@@ -34,6 +34,6 @@ export default class CronService {
       reply_markup: this.dinnersService.joinLeaveDinnerButton,
     });
 
-    return new Response("Start dinner triggered", { status: 201 });
+    return true;
   }
 }
