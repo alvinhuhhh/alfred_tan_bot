@@ -18,8 +18,7 @@ import CronService from "./service/cron.service.ts";
 
 try {
   // Create an instance of the Bot class
-  // const token = Deno.env.get("BOT_TOKEN");
-  const token = "abc";
+  const token = Deno.env.get("BOT_TOKEN");
   if (!token) {
     throw new Error("BOT_TOKEN is unset");
   }
