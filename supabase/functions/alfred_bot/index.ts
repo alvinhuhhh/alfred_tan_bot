@@ -212,7 +212,7 @@ try {
         status: 401,
       });
     }
-    return handleUpdate(req);
+    return await handleUpdate(req);
   });
 } catch (err) {
   console.error(err);
