@@ -22,8 +22,7 @@ import SecretsService from "./service/secrets.service.ts";
 import CronService from "./service/cron.service.ts";
 
 // Create an instance of the Bot class
-// const token = Deno.env.get("BOT_TOKEN");
-const token = "abc";
+const token = Deno.env.get("BOT_TOKEN");
 if (!token) {
   throw new Error("BOT_TOKEN is unset");
 }
@@ -215,11 +214,11 @@ router.post("/alfred_bot/cron-trigger", async (ctx) => {
 
 router.post("/alfred_bot", async (ctx) => {
   if (ctx.request.url.searchParams.get("secret") !== bot.token) {
-    ctx.response.body = "Wrong Bot token received, unauthorized";
+    ctx.response.body = "Invalid Bot token received, unauthorized";
     ctx.response.status = 401;
     return;
   }
-  return await handleUpdate(ctx);
+  await handleUpdate(ctx);
 });
 
 app.use(router.routes());
