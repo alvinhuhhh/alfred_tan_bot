@@ -1,6 +1,6 @@
 name: DEV Deployment
 
-on: [push]
+on: [push, workflow_dispatch]
 
 jobs:
   deployFunctions:
