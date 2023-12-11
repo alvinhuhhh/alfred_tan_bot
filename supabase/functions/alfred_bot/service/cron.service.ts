@@ -16,24 +16,29 @@ export default class CronService {
     this.dinnersService = dinnersService;
   }
 
-  public async handleCronTrigger(json: BodyJson): Promise<boolean> {
-    const body: RequestBody = await json.value;
+  public async handleCronTrigger(json: string): Promise<boolean> {
+    try {
+      const body: RequestBody = await JSON.parse(json);
 
-    const message: string | undefined =
-      await this.dinnersService.startDinnerScheduled(
-        body.chatId,
-        body.chatType
-      );
+      const message: string | undefined =
+        await this.dinnersService.startDinnerScheduled(
+          body.chatId,
+          body.chatType
+        );
 
-    if (!message) {
+      if (!message) {
+        return false;
+      }
+
+      this.bot.api.sendMessage(body.chatId, message, {
+        parse_mode: "HTML",
+        reply_markup: this.dinnersService.joinLeaveDinnerButton,
+      });
+
+      return true;
+    } catch (err) {
+      console.error(err);
       return false;
     }
-
-    this.bot.api.sendMessage(body.chatId, message, {
-      parse_mode: "HTML",
-      reply_markup: this.dinnersService.joinLeaveDinnerButton,
-    });
-
-    return true;
   }
 }

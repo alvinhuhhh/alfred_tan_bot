@@ -1,9 +1,4 @@
 import {
-  Application,
-  Router,
-  BodyJson,
-} from "https://deno.land/x/oak@v12.6.0/mod.ts";
-import {
   Bot,
   webhookCallback,
   session,
@@ -11,7 +6,7 @@ import {
 import {
   conversations,
   createConversation,
-} from "https://deno.land/x/grammy_conversations@v1.1.1/conversation.ts";
+} from "https://deno.land/x/grammy_conversations@v1.1.2/conversation.ts";
 
 import ChatsRepository from "./repository/chats.repository.ts";
 import DinnersRepository from "./repository/dinners.repository.ts";
@@ -21,9 +16,10 @@ import DinnersService from "./service/dinners.service.ts";
 import SecretsService from "./service/secrets.service.ts";
 import CronService from "./service/cron.service.ts";
 
-// Create an instance of the Bot class
 try {
-  const token = Deno.env.get("BOT_TOKEN");
+  // Create an instance of the Bot class
+  // const token = Deno.env.get("BOT_TOKEN");
+  const token = "abc";
   if (!token) {
     throw new Error("BOT_TOKEN is unset");
   }
@@ -40,10 +36,7 @@ try {
   );
 
   // Install the conversations plugin
-  bot.use(conversations());
-
-  // Create webhook callback
-  const handleUpdate = webhookCallback(bot, "oak");
+  // bot.use(conversations());
 
   // Initialize repositories
   const chatsRepository = new ChatsRepository();
@@ -144,15 +137,15 @@ try {
   });
 
   // Handle the /setwifipassword command
-  bot.use(createConversation(secretsService.setWIFIPassword));
-  bot.command("setwifipassword", async (ctx: MyContext) => {
-    console.debug(ctx);
-    await ctx.conversation.enter("setWIFIPassword");
-  });
-  bot.callbackQuery("set-wifi-password-callback", async (ctx: MyContext) => {
-    console.debug(ctx);
-    await ctx.conversation.enter("setWIFIPassword");
-  });
+  // bot.use(createConversation(secretsService.setWIFIPassword));
+  // bot.command("setwifipassword", async (ctx: MyContext) => {
+  //   console.debug(ctx);
+  //   await ctx.conversation.enter("setWIFIPassword");
+  // });
+  // bot.callbackQuery("set-wifi-password-callback", async (ctx: MyContext) => {
+  //   console.debug(ctx);
+  //   await ctx.conversation.enter("setWIFIPassword");
+  // });
 
   // Handle the /removewifipassword command
   bot.command("removewifipassword", async (ctx: MyContext) => {
@@ -171,15 +164,15 @@ try {
   });
 
   // Handle the /setcdcvoucherlink command
-  bot.use(createConversation(secretsService.setVoucherLink));
-  bot.command("setcdcvoucherlink", async (ctx: MyContext) => {
-    console.debug(ctx);
-    await ctx.conversation.enter("setVoucherLink");
-  });
-  bot.callbackQuery("set-voucher-link-callback", async (ctx: MyContext) => {
-    console.debug(ctx);
-    await ctx.conversation.enter("setVoucherLink");
-  });
+  // bot.use(createConversation(secretsService.setVoucherLink));
+  // bot.command("setcdcvoucherlink", async (ctx: MyContext) => {
+  //   console.debug(ctx);
+  //   await ctx.conversation.enter("setVoucherLink");
+  // });
+  // bot.callbackQuery("set-voucher-link-callback", async (ctx: MyContext) => {
+  //   console.debug(ctx);
+  //   await ctx.conversation.enter("setVoucherLink");
+  // });
 
   // Handle the /removecdcvoucherlink command
   bot.command("removecdcvoucherlink", async (ctx: MyContext) => {
@@ -190,48 +183,37 @@ try {
   // Cron
   const cronService = new CronService(bot, dinnersService);
 
-  // Create oak app
-  const app = new Application();
-  const router = new Router();
+  // Create webhook callback
+  const handleUpdate = webhookCallback(bot, "std/http");
 
-  router.get("/alfred_bot/ping", (ctx, next) => {
-    ctx.response.status = 200;
-    return next();
-  });
+  Deno.serve(async (req: Request) => {
+    console.debug(`${req.method} ${req.url}`);
+    const url = new URL(req.url);
 
-  router.post("/alfred_bot/cron-trigger", async (ctx, next) => {
-    const requestBody: BodyJson = ctx.request.body({ type: "json" });
-
-    if (!requestBody) {
-      console.error("Empty request body");
-      ctx.response.body = "Empty request body";
-      ctx.response.status = 400;
-      return next();
+    if (url.pathname === "/alfred_bot/ping") {
+      return new Response("Ping", { status: 200 });
     }
 
-    if (await cronService.handleCronTrigger(requestBody)) {
-      ctx.response.status = 201;
-      return next();
-    } else {
-      ctx.response.body = "Unable to trigger dinner";
-      ctx.response.status = 500;
-      return next();
+    if (url.pathname === "/alfred_bot/cron-trigger") {
+      const requestBody: string = await req.text();
+
+      if (!requestBody) {
+        return new Response("Invalid request body", { status: 400 });
+      }
+
+      if (await cronService.handleCronTrigger(requestBody)) {
+        return new Response("Dinner started", { status: 201 });
+      }
+      return new Response("Unable to start dinner", { status: 500 });
     }
-  });
 
-  router.post("/alfred_bot", async (ctx, next) => {
-    if (ctx.request.url.searchParams.get("secret") !== bot.token) {
-      ctx.response.body = "Invalid Bot token received, unauthorized";
-      ctx.response.status = 401;
-      return next();
+    if (url.searchParams.get("secret") !== bot.token) {
+      return new Response("Invalid Bot token received, unauthorized", {
+        status: 401,
+      });
     }
-    await handleUpdate(ctx);
-    return next();
+    return handleUpdate(req);
   });
-
-  app.use(router.routes());
-
-  app.listen();
 } catch (err) {
   console.error(err);
 }
