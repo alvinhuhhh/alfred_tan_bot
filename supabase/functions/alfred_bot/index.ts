@@ -50,7 +50,7 @@ try {
   });
   bot.callbackQuery("start-dinner-callback", async (ctx: MyContext) => {
     console.debug(ctx);
-    await DinnersService.startDinner(ctx);
+    await DinnersService.startDinnerCallback(ctx);
   });
 
   // Handle the /joindinner command

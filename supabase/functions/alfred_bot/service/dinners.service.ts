@@ -82,6 +82,44 @@ export default class DinnersService {
       const name: string = ctx.from?.first_name ?? "";
       const messageId: number | undefined = ctx.message?.message_id;
 
+      const data = await DinnersRepository.getDinnerByDate(
+        ctx.chat.id,
+        new Date()
+      );
+
+      if (messageId) {
+        if (!data) {
+          const result = await DinnersRepository.insertDinner(
+            ctx.chat.id,
+            new Date(),
+            name,
+            messageId + 1 // next message replied by Bot
+          );
+
+          this.replyDinnerDetails(ctx, result);
+        } else {
+          const result = await DinnersRepository.updateDinner(
+            ctx.chat.id,
+            messageId + 1, // next message replied by Bot
+            new Date(),
+            data.yes,
+            data.no
+          );
+
+          this.replyDinnerDetails(ctx, result);
+        }
+      }
+    }
+  }
+
+  public static async startDinnerCallback(ctx: MyContext): Promise<void> {
+    if (ctx.chat?.id) {
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+
+      const name: string = ctx.from?.first_name ?? "";
+      const messageId: number | undefined =
+        ctx.callbackQuery?.message?.message_id;
+
       if (messageId) {
         const data = await DinnersRepository.insertDinner(
           ctx.chat.id,
