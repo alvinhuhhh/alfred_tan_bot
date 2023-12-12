@@ -1,12 +1,7 @@
 import {
   Bot,
   webhookCallback,
-  session,
 } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
-import {
-  conversations,
-  createConversation,
-} from "https://deno.land/x/grammy_conversations@v1.1.2/conversation.ts";
 
 import ChatsService from "./service/chats.service.ts";
 import DinnersService from "./service/dinners.service.ts";
@@ -20,19 +15,6 @@ try {
     throw new Error("BOT_TOKEN is unset");
   }
   const bot = new Bot<MyContext>(token);
-
-  // Install the session plugin
-  bot.use(
-    session({
-      initial() {
-        // return empty object for now
-        return {};
-      },
-    })
-  );
-
-  // Install the conversations plugin
-  // bot.use(conversations());
 
   // Basic chat commands
   bot.hears(/\balfred\b/i, async (ctx: MyContext) => {
@@ -114,14 +96,13 @@ try {
   });
 
   // Handle the /setwifipassword command
-  // bot.use(createConversation(SecretsService.setWIFIPassword));
   bot.command("setwifipassword", async (ctx: MyContext) => {
     console.debug(ctx);
-    await ctx.conversation.enter("setWIFIPassword");
+    await SecretsService.setWIFIPassword(ctx);
   });
   bot.callbackQuery("set-wifi-password-callback", async (ctx: MyContext) => {
     console.debug(ctx);
-    await ctx.conversation.enter("setWIFIPassword");
+    await SecretsService.setWIFIPassword(ctx);
   });
 
   // Handle the /removewifipassword command
@@ -141,14 +122,13 @@ try {
   });
 
   // Handle the /setcdcvoucherlink command
-  // bot.use(createConversation(SecretsService.setVoucherLink));
   bot.command("setcdcvoucherlink", async (ctx: MyContext) => {
     console.debug(ctx);
-    await ctx.conversation.enter("setVoucherLink");
+    await SecretsService.setVoucherLink(ctx);
   });
   bot.callbackQuery("set-voucher-link-callback", async (ctx: MyContext) => {
     console.debug(ctx);
-    await ctx.conversation.enter("setVoucherLink");
+    await SecretsService.setVoucherLink(ctx);
   });
 
   // Handle the /removecdcvoucherlink command

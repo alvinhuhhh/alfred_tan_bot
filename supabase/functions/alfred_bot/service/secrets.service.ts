@@ -57,38 +57,33 @@ export default class SecretsService {
     }
   }
 
-  public static async setWIFIPassword(
-    conversation: MyConversation,
-    ctx: MyContext
-  ): Promise<void> {
+  public static async setWIFIPassword(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
       await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-      await ctx.reply("Okay, what is the WIFI password?", {
-        reply_markup: { force_reply: true },
-      });
-      const userMsg = await conversation.waitFor(":text");
+      const input: string | undefined = ctx.match?.toString();
 
-      if (userMsg.update.message?.text) {
+      if (input) {
         // update secret if key exists
         const data = await SecretsRepository.updateSecret(
           ctx.chat.id,
-          Config.WIFI_PASSWORD_KEY,
-          userMsg.update.message.text
+          Config.VOUCHER_LINK_KEY,
+          input
         );
 
         if (!data) {
           // add new secret if key does not exist
           await SecretsRepository.insertSecret(
             ctx.chat.id,
-            Config.WIFI_PASSWORD_KEY,
-            userMsg.update.message.text
+            Config.VOUCHER_LINK_KEY,
+            input
           );
         }
-
         ctx.reply("I'll remember it!");
         return;
       }
+
+      ctx.reply("You didn't tell me anything!");
     }
   }
 
@@ -122,24 +117,18 @@ export default class SecretsService {
     }
   }
 
-  public static async setVoucherLink(
-    conversation: MyConversation,
-    ctx: MyContext
-  ): Promise<void> {
+  public static async setVoucherLink(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
       await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-      await ctx.reply("Okay, what is the link for CDC Vouchers?", {
-        reply_markup: { force_reply: true },
-      });
-      const userMsg = await conversation.waitFor(":text");
+      const input: string | undefined = ctx.match?.toString();
 
-      if (userMsg.update.message?.text) {
+      if (input) {
         // update secret if key exists
         const data = await SecretsRepository.updateSecret(
           ctx.chat.id,
           Config.VOUCHER_LINK_KEY,
-          userMsg.update.message.text
+          input
         );
 
         if (!data) {
@@ -147,13 +136,14 @@ export default class SecretsService {
           await SecretsRepository.insertSecret(
             ctx.chat.id,
             Config.VOUCHER_LINK_KEY,
-            userMsg.update.message.text
+            input
           );
         }
-
         ctx.reply("I'll remember it!");
         return;
       }
+
+      ctx.reply("You didn't tell me anything!");
     }
   }
 
