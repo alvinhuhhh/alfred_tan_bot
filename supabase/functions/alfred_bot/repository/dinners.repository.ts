@@ -31,7 +31,8 @@ export default class DinnersRepository {
   public static async insertDinner(
     chatId: number,
     date: Date,
-    name?: string
+    name?: string,
+    messageId?: number
   ): Promise<Dinner | undefined> {
     // check if dinner already exists
     const data: Dinner | undefined = await this.getDinnerByDate(chatId, date);
@@ -43,7 +44,13 @@ export default class DinnersRepository {
 
     const result = await db
       .from(Config.DINNER_TABLENAME)
-      .insert({ date: date, yes: name ? [name] : [], no: [], chatId: chatId })
+      .insert({
+        date: date,
+        yes: name ? [name] : [],
+        no: [],
+        chatId: chatId,
+        messageIds: messageId ? [messageId] : [],
+      })
       .select();
     if (result.error) throw result.error;
 
@@ -55,6 +62,7 @@ export default class DinnersRepository {
 
   public static async updateDinner(
     chatId: number,
+    messageId: number,
     date: Date,
     yes: Array<string>,
     no: Array<string>
@@ -75,7 +83,7 @@ export default class DinnersRepository {
 
     const result = await db
       .from(Config.DINNER_TABLENAME)
-      .update({ yes: yes, no: no })
+      .update({ yes: yes, no: no, messageIds: [...data.messageIds, messageId] })
       .eq("id", dinnerId)
       .select();
     if (result.error) throw result.error;

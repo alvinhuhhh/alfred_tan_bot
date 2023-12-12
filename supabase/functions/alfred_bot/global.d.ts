@@ -19,6 +19,7 @@ declare global {
   interface Dinner {
     id: number;
     chatId: number;
+    messageIds: number[];
     date: Date;
     yes: string[];
     no: string[];
