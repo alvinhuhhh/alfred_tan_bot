@@ -129,7 +129,7 @@ export default class DinnersService {
         if (messageId) {
           bot.api.editMessageText(
             chatId,
-            messageId,
+            messageId - 1,
             this.parseDinnerDetails(result),
             { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
           );
@@ -176,7 +176,7 @@ export default class DinnersService {
         if (messageId) {
           bot.api.editMessageText(
             chatId,
-            messageId,
+            messageId - 1,
             this.parseDinnerDetails(result),
             { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
           );
