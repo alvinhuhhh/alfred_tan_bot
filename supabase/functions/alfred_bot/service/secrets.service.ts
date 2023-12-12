@@ -67,7 +67,7 @@ export default class SecretsService {
         // update secret if key exists
         const data = await SecretsRepository.updateSecret(
           ctx.chat.id,
-          Config.VOUCHER_LINK_KEY,
+          Config.WIFI_PASSWORD_KEY,
           input
         );
 
@@ -75,7 +75,7 @@ export default class SecretsService {
           // add new secret if key does not exist
           await SecretsRepository.insertSecret(
             ctx.chat.id,
-            Config.VOUCHER_LINK_KEY,
+            Config.WIFI_PASSWORD_KEY,
             input
           );
         }
