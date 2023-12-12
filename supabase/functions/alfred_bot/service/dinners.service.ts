@@ -52,12 +52,22 @@ export default class DinnersService {
     if (ctx.chat?.id) {
       await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
+      const messageId: number | undefined = ctx.message?.message_id;
+
       const data = await DinnersRepository.getDinnerByDate(
         ctx.chat.id,
         new Date()
       );
 
-      if (data) {
+      if (data && messageId) {
+        await DinnersRepository.updateDinner(
+          ctx.chat.id,
+          messageId + 1, // next message replied by Bot
+          new Date(),
+          data.yes,
+          data.no
+        );
+
         this.replyDinnerDetails(ctx, data);
       } else {
         this.replyDinnerNotFound(ctx);
