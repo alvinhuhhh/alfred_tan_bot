@@ -102,7 +102,7 @@ export default class DinnersService {
 
       const name: string = ctx.from?.first_name ?? "";
       const chatId = ctx.chat.id;
-      const messageId = ctx.message?.message_id;
+      const messageId = ctx.callbackQuery?.message?.message_id;
 
       const existingDinner = await DinnersRepository.getDinnerByDate(
         chatId,
@@ -126,8 +126,6 @@ export default class DinnersService {
           no
         );
 
-        console.log(messageId);
-
         if (messageId) {
           ctx.api.editMessageText(
             chatId,
@@ -135,7 +133,13 @@ export default class DinnersService {
             this.parseDinnerDetails(result),
             { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
           );
+          return;
         }
+
+        ctx.reply(this.parseDinnerDetails(result), {
+          parse_mode: "HTML",
+          reply_markup: this.joinLeaveDinnerButton,
+        });
       } else {
         this.replyDinnerNotFound(ctx);
       }
@@ -151,7 +155,7 @@ export default class DinnersService {
 
       const name: string = ctx.from?.first_name ?? "";
       const chatId = ctx.chat.id;
-      const messageId = ctx.message?.message_id;
+      const messageId = ctx.callbackQuery?.message?.message_id;
 
       const existingDinner = await DinnersRepository.getDinnerByDate(
         chatId,
@@ -175,8 +179,6 @@ export default class DinnersService {
           no
         );
 
-        console.log(messageId);
-
         if (messageId) {
           ctx.api.editMessageText(
             chatId,
@@ -184,7 +186,13 @@ export default class DinnersService {
             this.parseDinnerDetails(result),
             { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
           );
+          return;
         }
+
+        ctx.reply(this.parseDinnerDetails(result), {
+          parse_mode: "HTML",
+          reply_markup: this.joinLeaveDinnerButton,
+        });
       } else {
         this.replyDinnerNotFound(ctx);
       }
