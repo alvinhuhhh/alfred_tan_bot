@@ -126,7 +126,14 @@ export default class DinnersService {
           no
         );
 
-        ctx.editMessageText(this.parseDinnerDetails(result));
+        if (messageId) {
+          bot.api.editMessageText(
+            chatId,
+            messageId,
+            this.parseDinnerDetails(result),
+            { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
+          );
+        }
       } else {
         this.replyDinnerNotFound(ctx);
       }
@@ -166,7 +173,14 @@ export default class DinnersService {
           no
         );
 
-        ctx.editMessageText(this.parseDinnerDetails(result));
+        if (messageId) {
+          bot.api.editMessageText(
+            chatId,
+            messageId,
+            this.parseDinnerDetails(result),
+            { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
+          );
+        }
       } else {
         this.replyDinnerNotFound(ctx);
       }
