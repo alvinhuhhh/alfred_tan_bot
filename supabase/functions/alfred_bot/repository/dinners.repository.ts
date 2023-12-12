@@ -80,10 +80,12 @@ export default class DinnersRepository {
     }
 
     const dinnerId: number = data.id;
+    const messageIdList: Set<number> = new Set(data.messageIds);
+    messageIdList.add(messageId);
 
     const result = await db
       .from(Config.DINNER_TABLENAME)
-      .update({ yes: yes, no: no, messageIds: [...data.messageIds, messageId] })
+      .update({ yes: yes, no: no, messageIds: messageIdList })
       .eq("id", dinnerId)
       .select();
     if (result.error) throw result.error;

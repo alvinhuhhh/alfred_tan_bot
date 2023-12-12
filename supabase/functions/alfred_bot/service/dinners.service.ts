@@ -128,12 +128,18 @@ export default class DinnersService {
             no
           );
 
-          ctx.api.editMessageText(
-            chatId,
-            messageId,
-            this.parseDinnerDetails(result),
-            { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
-          );
+          // Update all messages in messageIds
+          if (result?.messageIds) {
+            for (const messageId of result.messageIds) {
+              ctx.api.editMessageText(
+                chatId,
+                messageId,
+                this.parseDinnerDetails(result),
+                { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
+              );
+            }
+          }
+
           return;
         }
       } else {
@@ -174,12 +180,18 @@ export default class DinnersService {
             no
           );
 
-          ctx.api.editMessageText(
-            chatId,
-            messageId,
-            this.parseDinnerDetails(result),
-            { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
-          );
+          // Update all messages in messageIds
+          if (result?.messageIds) {
+            for (const messageId of result.messageIds) {
+              ctx.api.editMessageText(
+                chatId,
+                messageId,
+                this.parseDinnerDetails(result),
+                { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
+              );
+            }
+          }
+
           return;
         }
       } else {
