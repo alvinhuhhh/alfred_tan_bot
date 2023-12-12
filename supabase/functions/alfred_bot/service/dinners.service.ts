@@ -126,20 +126,7 @@ export default class DinnersService {
           no
         );
 
-        if (messageId) {
-          bot.api.editMessageText(
-            chatId,
-            messageId,
-            this.parseDinnerDetails(result),
-            {
-              parse_mode: "HTML",
-              reply_markup: this.joinLeaveDinnerButton,
-            }
-          );
-          return;
-        }
-
-        this.replyDinnerDetails(ctx, result);
+        ctx.editMessageText(this.parseDinnerDetails(result));
       } else {
         this.replyDinnerNotFound(ctx);
       }
@@ -179,20 +166,7 @@ export default class DinnersService {
           no
         );
 
-        if (messageId) {
-          bot.api.editMessageText(
-            chatId,
-            messageId,
-            this.parseDinnerDetails(result),
-            {
-              parse_mode: "HTML",
-              reply_markup: this.joinLeaveDinnerButton,
-            }
-          );
-          return;
-        }
-
-        this.replyDinnerDetails(ctx, result);
+        ctx.editMessageText(this.parseDinnerDetails(result));
       } else {
         this.replyDinnerNotFound(ctx);
       }
