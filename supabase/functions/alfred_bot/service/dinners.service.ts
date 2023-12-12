@@ -126,6 +126,8 @@ export default class DinnersService {
           no
         );
 
+        console.log(messageId);
+
         if (messageId) {
           ctx.api.editMessageText(
             chatId,
@@ -172,6 +174,8 @@ export default class DinnersService {
           yes,
           no
         );
+
+        console.log(messageId);
 
         if (messageId) {
           ctx.api.editMessageText(
