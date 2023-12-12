@@ -52,16 +52,14 @@ export default class DinnersService {
     if (ctx.chat?.id) {
       await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
+      const chatId: number = ctx.chat.id;
       const messageId: number | undefined = ctx.message?.message_id;
 
-      const data = await DinnersRepository.getDinnerByDate(
-        ctx.chat.id,
-        new Date()
-      );
+      const data = await DinnersRepository.getDinnerByDate(chatId, new Date());
 
       if (data && messageId) {
         await DinnersRepository.updateDinner(
-          ctx.chat.id,
+          chatId,
           messageId + 1, // next message replied by Bot
           new Date(),
           data.yes,
@@ -80,17 +78,15 @@ export default class DinnersService {
       await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
       const name: string = ctx.from?.first_name ?? "";
+      const chatId: number = ctx.chat.id;
       const messageId: number | undefined = ctx.message?.message_id;
 
-      const data = await DinnersRepository.getDinnerByDate(
-        ctx.chat.id,
-        new Date()
-      );
+      const data = await DinnersRepository.getDinnerByDate(chatId, new Date());
 
       if (messageId) {
         if (!data) {
           const result = await DinnersRepository.insertDinner(
-            ctx.chat.id,
+            chatId,
             new Date(),
             name,
             messageId + 1 // next message replied by Bot
@@ -99,7 +95,7 @@ export default class DinnersService {
           this.replyDinnerDetails(ctx, result);
         } else {
           const result = await DinnersRepository.updateDinner(
-            ctx.chat.id,
+            chatId,
             messageId + 1, // next message replied by Bot
             new Date(),
             data.yes,
@@ -169,7 +165,7 @@ export default class DinnersService {
 
         if (messageId) {
           const result = await DinnersRepository.updateDinner(
-            ctx.chat.id,
+            chatId,
             messageId,
             new Date(),
             yes,
@@ -221,7 +217,7 @@ export default class DinnersService {
 
         if (messageId) {
           const result = await DinnersRepository.updateDinner(
-            ctx.chat.id,
+            chatId,
             messageId,
             new Date(),
             yes,
