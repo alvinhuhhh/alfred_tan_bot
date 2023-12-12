@@ -1,17 +1,8 @@
-import { Bot } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 import ChatsRepository from "../repository/chats.repository.ts";
 
 export default class ChatsService {
-  bot: Bot<MyContext>;
-  chatsRepository: ChatsRepository;
-
-  constructor(bot: Bot<MyContext>, chatsRepository: ChatsRepository) {
-    this.bot = bot;
-    this.chatsRepository = chatsRepository;
-  }
-
-  public commandCatalog: InlineKeyboard = new InlineKeyboard()
+  public static commandCatalog: InlineKeyboard = new InlineKeyboard()
     .text("See who's on tonight's dinner", "get-dinner-callback")
     .row()
     .text("Ask me for the WIFI password", "get-wifi-password-callback")
@@ -19,33 +10,33 @@ export default class ChatsService {
     .text("Ask for the link for CDC Vouchers", "get-voucher-link-callback")
     .row();
 
-  public async startChat(ctx: MyContext): Promise<void> {
+  public static async startChat(ctx: MyContext): Promise<void> {
     const id: number = ctx.chat?.id ?? -1;
     const type: string = ctx.chat?.type ?? "";
 
-    await this.chatsRepository.insertChat(id, type);
+    await ChatsRepository.insertChat(id, type);
 
     ctx.reply("Welcome! I am up and running!", {
       reply_markup: this.commandCatalog,
     });
   }
 
-  public async replyHello(ctx: MyContext): Promise<void> {
+  public static async replyHello(ctx: MyContext): Promise<void> {
     const id: number = ctx.chat?.id ?? -1;
     const type: string = ctx.chat?.type ?? "";
 
-    await this.chatsRepository.insertChat(id, type);
+    await ChatsRepository.insertChat(id, type);
 
     ctx.reply("Hello there! What can I do for you today?", {
       reply_markup: this.commandCatalog,
     });
   }
 
-  public async replyName(ctx: MyContext): Promise<void> {
+  public static async replyName(ctx: MyContext): Promise<void> {
     const id: number = ctx.chat?.id ?? -1;
     const type: string = ctx.chat?.type ?? "";
 
-    await this.chatsRepository.insertChat(id, type);
+    await ChatsRepository.insertChat(id, type);
 
     ctx.reply("How can I help?", {
       reply_to_message_id: ctx.message?.message_id,
@@ -53,7 +44,7 @@ export default class ChatsService {
     });
   }
 
-  public async exitConversation(ctx: MyContext): Promise<void> {
+  public static async exitConversation(ctx: MyContext): Promise<void> {
     await ctx.conversation.exit();
     ctx.reply("Ended any conversation we were having.");
   }

@@ -1,63 +1,50 @@
-import { Bot } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 import ChatsRepository from "../repository/chats.repository.ts";
 import SecretsRepository from "../repository/secrets.repository.ts";
 import Config from "../config.ts";
 
 export default class SecretsService {
-  bot: Bot<MyContext>;
-  chatsRepository: ChatsRepository;
-  secretsRepository: SecretsRepository;
+  public static setWIFIPasswordButton: InlineKeyboard =
+    new InlineKeyboard().text(
+      "Set WIFI Password",
+      "set-wifi-password-callback"
+    );
 
-  constructor(
-    bot: Bot<MyContext>,
-    chatsRepository: ChatsRepository,
-    secretsRepository: SecretsRepository
-  ) {
-    this.bot = bot;
-    this.chatsRepository = chatsRepository;
-    this.secretsRepository = secretsRepository;
-  }
+  public static setVoucherLinkButton: InlineKeyboard =
+    new InlineKeyboard().text(
+      "Set CDC Voucher link",
+      "set-voucher-link-callback"
+    );
 
-  public setWIFIPasswordButton: InlineKeyboard = new InlineKeyboard().text(
-    "Set WIFI Password",
-    "set-wifi-password-callback"
-  );
-
-  public setVoucherLinkButton: InlineKeyboard = new InlineKeyboard().text(
-    "Set CDC Voucher link",
-    "set-voucher-link-callback"
-  );
-
-  private replyWIFIPassword(ctx: MyContext, data: any): void {
+  private static replyWIFIPassword(ctx: MyContext, data: any): void {
     const text = `${data.value}`;
     ctx.reply(text);
     return;
   }
 
-  private replyWIFIPasswordNotFound(ctx: MyContext): void {
+  private static replyWIFIPasswordNotFound(ctx: MyContext): void {
     const text = `I don't know the WIFI password! Tell me?`;
     ctx.reply(text, { reply_markup: this.setWIFIPasswordButton });
     return;
   }
 
-  private replyVoucherLink(ctx: MyContext, data: any): void {
+  private static replyVoucherLink(ctx: MyContext, data: any): void {
     const text = `Here's the link for CDC Vouchers:\n${data.value}`;
     ctx.reply(text);
     return;
   }
 
-  private replyVoucherLinkNotFound(ctx: MyContext): void {
+  private static replyVoucherLinkNotFound(ctx: MyContext): void {
     const text = `I don't know the link! Tell me?`;
     ctx.reply(text, { reply_markup: this.setVoucherLinkButton });
     return;
   }
 
-  public async getWIFIPassword(ctx: MyContext): Promise<void> {
+  public static async getWIFIPassword(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-      const data = await this.secretsRepository.getSecretByKey(
+      const data = await SecretsRepository.getSecretByKey(
         ctx.chat.id,
         Config.WIFI_PASSWORD_KEY
       );
@@ -70,12 +57,12 @@ export default class SecretsService {
     }
   }
 
-  public async setWIFIPassword(
+  public static async setWIFIPassword(
     conversation: MyConversation,
     ctx: MyContext
   ): Promise<void> {
     if (ctx.chat?.id) {
-      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
       await ctx.reply("Okay, what is the WIFI password?", {
         reply_markup: { force_reply: true },
@@ -84,7 +71,7 @@ export default class SecretsService {
 
       if (userMsg.update.message?.text) {
         // update secret if key exists
-        const data = await this.secretsRepository.updateSecret(
+        const data = await SecretsRepository.updateSecret(
           ctx.chat.id,
           Config.WIFI_PASSWORD_KEY,
           userMsg.update.message.text
@@ -92,7 +79,7 @@ export default class SecretsService {
 
         if (!data) {
           // add new secret if key does not exist
-          await this.secretsRepository.insertSecret(
+          await SecretsRepository.insertSecret(
             ctx.chat.id,
             Config.WIFI_PASSWORD_KEY,
             userMsg.update.message.text
@@ -105,11 +92,11 @@ export default class SecretsService {
     }
   }
 
-  public async removeWIFIPassword(ctx: MyContext): Promise<void> {
+  public static async removeWIFIPassword(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-      await this.secretsRepository.deleteSecret(
+      await SecretsRepository.deleteSecret(
         ctx.chat.id,
         Config.WIFI_PASSWORD_KEY
       );
@@ -118,11 +105,11 @@ export default class SecretsService {
     }
   }
 
-  public async getVoucherLink(ctx: MyContext): Promise<void> {
+  public static async getVoucherLink(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-      const data = await this.secretsRepository.getSecretByKey(
+      const data = await SecretsRepository.getSecretByKey(
         ctx.chat.id,
         Config.VOUCHER_LINK_KEY
       );
@@ -135,12 +122,12 @@ export default class SecretsService {
     }
   }
 
-  public async setVoucherLink(
+  public static async setVoucherLink(
     conversation: MyConversation,
     ctx: MyContext
   ): Promise<void> {
     if (ctx.chat?.id) {
-      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
       await ctx.reply("Okay, what is the link for CDC Vouchers?", {
         reply_markup: { force_reply: true },
@@ -149,7 +136,7 @@ export default class SecretsService {
 
       if (userMsg.update.message?.text) {
         // update secret if key exists
-        const data = await this.secretsRepository.updateSecret(
+        const data = await SecretsRepository.updateSecret(
           ctx.chat.id,
           Config.VOUCHER_LINK_KEY,
           userMsg.update.message.text
@@ -157,7 +144,7 @@ export default class SecretsService {
 
         if (!data) {
           // add new secret if key does not exist
-          await this.secretsRepository.insertSecret(
+          await SecretsRepository.insertSecret(
             ctx.chat.id,
             Config.VOUCHER_LINK_KEY,
             userMsg.update.message.text
@@ -170,11 +157,11 @@ export default class SecretsService {
     }
   }
 
-  public async removeVoucherLink(ctx: MyContext): Promise<void> {
+  public static async removeVoucherLink(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-      await this.secretsRepository.deleteSecret(
+      await SecretsRepository.deleteSecret(
         ctx.chat.id,
         Config.VOUCHER_LINK_KEY
       );

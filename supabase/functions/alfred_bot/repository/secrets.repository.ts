@@ -2,7 +2,7 @@ import db from "./db.repository.ts";
 import Config from "../config.ts";
 
 export default class SecretsRepository {
-  public async getSecretByKey(chatId: number, key: string) {
+  public static async getSecretByKey(chatId: number, key: string) {
     const query = await db
       .from(Config.SECRET_TABLENAME)
       .select()
@@ -20,7 +20,7 @@ export default class SecretsRepository {
     }
   }
 
-  public async insertSecret(chatId: number, key: string, value: string) {
+  public static async insertSecret(chatId: number, key: string, value: string) {
     // check if key already exists
     const data = await this.getSecretByKey(chatId, key);
 
@@ -40,7 +40,11 @@ export default class SecretsRepository {
     }
   }
 
-  public async updateSecret(chatId: number, key: string, newValue: string) {
+  public static async updateSecret(
+    chatId: number,
+    key: string,
+    newValue: string
+  ) {
     // check if secret already exists
     const data = await this.getSecretByKey(chatId, key);
 
@@ -63,7 +67,7 @@ export default class SecretsRepository {
     }
   }
 
-  public async deleteSecret(chatId: number, key: string) {
+  public static async deleteSecret(chatId: number, key: string) {
     // check if secret already exists
     const data = await this.getSecretByKey(chatId, key);
 

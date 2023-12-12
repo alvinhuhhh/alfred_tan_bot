@@ -1,33 +1,18 @@
-import { Bot } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 import ChatsRepository from "../repository/chats.repository.ts";
 import DinnersRepository from "../repository/dinners.repository.ts";
 
 export default class DinnersService {
-  bot: Bot<MyContext>;
-  chatsRepository: ChatsRepository;
-  dinnersRepository: DinnersRepository;
-
-  constructor(
-    bot: Bot<MyContext>,
-    chatsRepository: ChatsRepository,
-    dinnersRepository: DinnersRepository
-  ) {
-    this.bot = bot;
-    this.chatsRepository = chatsRepository;
-    this.dinnersRepository = dinnersRepository;
-  }
-
-  public startDinnerButton: InlineKeyboard = new InlineKeyboard().text(
+  public static startDinnerButton: InlineKeyboard = new InlineKeyboard().text(
     "Start Dinner",
     "start-dinner-callback"
   );
 
-  public joinLeaveDinnerButton: InlineKeyboard = new InlineKeyboard()
+  public static joinLeaveDinnerButton: InlineKeyboard = new InlineKeyboard()
     .text("Leave Dinner", "leave-dinner-callback")
     .text("Join Dinner", "join-dinner-callback");
 
-  public parseDinnerDetails(data: any): string {
+  public static parseDinnerDetails(data: any): string {
     const formattedDate = data.date.split("-").reverse().join("/");
     let yes = "";
     let no = "";
@@ -48,7 +33,7 @@ export default class DinnersService {
     return text;
   }
 
-  private replyDinnerDetails(ctx: MyContext, data: any): void {
+  private static replyDinnerDetails(ctx: MyContext, data: any): void {
     ctx.reply(this.parseDinnerDetails(data), {
       parse_mode: "HTML",
       reply_markup: this.joinLeaveDinnerButton,
@@ -56,18 +41,18 @@ export default class DinnersService {
     return;
   }
 
-  private replyDinnerNotFound(ctx: MyContext): void {
+  private static replyDinnerNotFound(ctx: MyContext): void {
     ctx.reply("Dinner not started for tonight. Start one now?", {
       reply_markup: this.startDinnerButton,
     });
     return;
   }
 
-  public async getDinner(ctx: MyContext): Promise<void> {
+  public static async getDinner(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-      const data = await this.dinnersRepository.getDinnerByDate(
+      const data = await DinnersRepository.getDinnerByDate(
         ctx.chat.id,
         new Date()
       );
@@ -80,13 +65,13 @@ export default class DinnersService {
     }
   }
 
-  public async startDinner(ctx: MyContext): Promise<void> {
+  public static async startDinner(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
       const name: string = ctx.from?.first_name ?? "";
 
-      const data = await this.dinnersRepository.insertDinner(
+      const data = await DinnersRepository.insertDinner(
         ctx.chat.id,
         new Date(),
         name
@@ -96,24 +81,24 @@ export default class DinnersService {
     }
   }
 
-  public async startDinnerScheduled(
+  public static async startDinnerScheduled(
     chatId: number,
     chatType: string
   ): Promise<string> {
-    await this.chatsRepository.insertChat(chatId, chatType);
+    await ChatsRepository.insertChat(chatId, chatType);
 
-    const data = await this.dinnersRepository.insertDinner(chatId, new Date());
+    const data = await DinnersRepository.insertDinner(chatId, new Date());
 
     return this.parseDinnerDetails(data);
   }
 
-  public async joinDinner(ctx: MyContext): Promise<void> {
+  public static async joinDinner(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
       const name: string = ctx.from?.first_name ?? "";
 
-      const existingDinner = await this.dinnersRepository.getDinnerByDate(
+      const existingDinner = await DinnersRepository.getDinnerByDate(
         ctx.chat.id,
         new Date()
       );
@@ -128,7 +113,7 @@ export default class DinnersService {
           no = existingDinner.no.filter((n: string) => n != name);
         }
 
-        const result = await this.dinnersRepository.updateDinner(
+        const result = await DinnersRepository.updateDinner(
           ctx.chat.id,
           new Date(),
           yes,
@@ -142,13 +127,13 @@ export default class DinnersService {
     }
   }
 
-  public async leaveDinner(ctx: MyContext): Promise<void> {
+  public static async leaveDinner(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
       const name: string = ctx.from?.first_name ?? "";
 
-      const existingDinner = await this.dinnersRepository.getDinnerByDate(
+      const existingDinner = await DinnersRepository.getDinnerByDate(
         ctx.chat.id,
         new Date()
       );
@@ -163,7 +148,7 @@ export default class DinnersService {
           yes = existingDinner.yes.filter((n: string) => n != name);
         }
 
-        const result = await this.dinnersRepository.updateDinner(
+        const result = await DinnersRepository.updateDinner(
           ctx.chat.id,
           new Date(),
           yes,
@@ -177,11 +162,11 @@ export default class DinnersService {
     }
   }
 
-  public async endDinner(ctx: MyContext): Promise<void> {
+  public static async endDinner(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await this.chatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
-      await this.dinnersRepository.deleteDinner(ctx.chat.id, new Date());
+      await DinnersRepository.deleteDinner(ctx.chat.id, new Date());
 
       ctx.reply("No more dinner for tonight!");
     }
