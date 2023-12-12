@@ -2,7 +2,6 @@
 
 start - Start Alfred
 hello - Say hi to Alfred
-cancel - Exit any conversation you have with Alfred
 getdinner - Get tonight's dinner details
 startdinner - Start tonight's dinner attendance
 joindinner - Join tonight's dinner

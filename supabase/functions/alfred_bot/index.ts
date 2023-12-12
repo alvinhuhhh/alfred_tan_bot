@@ -32,11 +32,6 @@ try {
     await ChatsService.replyHello(ctx);
   });
 
-  bot.command("cancel", async (ctx: MyContext) => {
-    console.debug(ctx);
-    await ChatsService.exitConversation(ctx);
-  });
-
   // Dinners
   // Handle the /getdinner command
   bot.command("getdinner", async (ctx: MyContext) => {

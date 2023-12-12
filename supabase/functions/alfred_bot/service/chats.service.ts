@@ -43,9 +43,4 @@ export default class ChatsService {
       reply_markup: this.commandCatalog,
     });
   }
-
-  public static async exitConversation(ctx: MyContext): Promise<void> {
-    await ctx.conversation.exit();
-    ctx.reply("Ended any conversation we were having.");
-  }
 }
