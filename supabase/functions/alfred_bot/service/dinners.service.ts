@@ -1,3 +1,4 @@
+import { Bot } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 import ChatsRepository from "../repository/chats.repository.ts";
 import DinnersRepository from "../repository/dinners.repository.ts";
@@ -92,14 +93,19 @@ export default class DinnersService {
     return this.parseDinnerDetails(data);
   }
 
-  public static async joinDinner(ctx: MyContext): Promise<void> {
+  public static async joinDinner(
+    bot: Bot<MyContext>,
+    ctx: MyContext
+  ): Promise<void> {
     if (ctx.chat?.id) {
       await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
       const name: string = ctx.from?.first_name ?? "";
+      const chatId = ctx.chat.id;
+      const messageId = ctx.message?.message_id;
 
       const existingDinner = await DinnersRepository.getDinnerByDate(
-        ctx.chat.id,
+        chatId,
         new Date()
       );
       if (existingDinner) {
@@ -120,6 +126,19 @@ export default class DinnersService {
           no
         );
 
+        if (messageId) {
+          bot.api.editMessageText(
+            chatId,
+            messageId,
+            this.parseDinnerDetails(result),
+            {
+              parse_mode: "HTML",
+              reply_markup: this.joinLeaveDinnerButton,
+            }
+          );
+          return;
+        }
+
         this.replyDinnerDetails(ctx, result);
       } else {
         this.replyDinnerNotFound(ctx);
@@ -127,14 +146,19 @@ export default class DinnersService {
     }
   }
 
-  public static async leaveDinner(ctx: MyContext): Promise<void> {
+  public static async leaveDinner(
+    bot: Bot<MyContext>,
+    ctx: MyContext
+  ): Promise<void> {
     if (ctx.chat?.id) {
       await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
 
       const name: string = ctx.from?.first_name ?? "";
+      const chatId = ctx.chat.id;
+      const messageId = ctx.message?.message_id;
 
       const existingDinner = await DinnersRepository.getDinnerByDate(
-        ctx.chat.id,
+        chatId,
         new Date()
       );
       if (existingDinner) {
@@ -154,6 +178,19 @@ export default class DinnersService {
           yes,
           no
         );
+
+        if (messageId) {
+          bot.api.editMessageText(
+            chatId,
+            messageId,
+            this.parseDinnerDetails(result),
+            {
+              parse_mode: "HTML",
+              reply_markup: this.joinLeaveDinnerButton,
+            }
+          );
+          return;
+        }
 
         this.replyDinnerDetails(ctx, result);
       } else {

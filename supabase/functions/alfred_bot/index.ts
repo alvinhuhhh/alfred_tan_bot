@@ -56,21 +56,21 @@ try {
   // Handle the /joindinner command
   bot.command("joindinner", async (ctx: MyContext) => {
     console.debug(ctx);
-    await DinnersService.joinDinner(ctx);
+    await DinnersService.joinDinner(bot, ctx);
   });
   bot.callbackQuery("join-dinner-callback", async (ctx: MyContext) => {
     console.debug(ctx);
-    await DinnersService.joinDinner(ctx);
+    await DinnersService.joinDinner(bot, ctx);
   });
 
   // Handle the /leavedinner command
   bot.command("leavedinner", async (ctx: MyContext) => {
     console.debug(ctx);
-    await DinnersService.leaveDinner(ctx);
+    await DinnersService.leaveDinner(bot, ctx);
   });
   bot.callbackQuery("leave-dinner-callback", async (ctx: MyContext) => {
     console.debug(ctx);
-    await DinnersService.leaveDinner(ctx);
+    await DinnersService.leaveDinner(bot, ctx);
   });
 
   // Handle the /enddinner command
