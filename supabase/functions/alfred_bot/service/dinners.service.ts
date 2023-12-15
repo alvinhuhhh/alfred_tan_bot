@@ -53,7 +53,8 @@ export default class DinnersService {
         if (!chatExists) ChatsService.replyChatNotStarted(ctx);
 
         const chatId: number = ctx.chat.id;
-        const messageId: number | undefined = ctx.message?.message_id;
+        const messageId: number | undefined =
+          ctx.message?.message_id ?? ctx.callbackQuery?.message?.message_id;
 
         if (messageId === undefined)
           throw new Error(`[getDinner] messageId is undefined`);
