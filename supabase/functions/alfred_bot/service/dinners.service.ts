@@ -72,7 +72,7 @@ export default class DinnersService {
               data.messageIds,
               messageId + 1
             ),
-            date: new Date(),
+            date: new Date(data.date),
             yes: data.yes,
             no: data.no,
           };
@@ -127,7 +127,7 @@ export default class DinnersService {
             data.messageIds,
             messageId + 1
           ),
-          date: data.date,
+          date: new Date(data.date),
           yes: data.yes,
           no: data.no,
         };
@@ -180,7 +180,7 @@ export default class DinnersService {
             data.messageIds,
             messageId + 1
           ),
-          date: data.date,
+          date: new Date(data.date),
           yes: data.yes,
           no: data.no,
         };
@@ -245,7 +245,7 @@ export default class DinnersService {
           const dinner: Dinner = {
             id: existingDinner.id,
             chatId: chatId,
-            date: existingDinner.date,
+            date: new Date(existingDinner.date),
             messageIds: existingDinner.messageIds,
             yes: yes,
             no: no,
@@ -306,7 +306,7 @@ export default class DinnersService {
           const dinner: Dinner = {
             id: existingDinner.id,
             chatId: chatId,
-            date: existingDinner.date,
+            date: new Date(existingDinner.date),
             messageIds: existingDinner.messageIds,
             yes: yes,
             no: no,
