@@ -1,5 +1,5 @@
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
-import ChatsRepository from "../repository/chats.repository.ts";
+import ChatsService from "./chats.service.ts";
 import SecretsRepository from "../repository/secrets.repository.ts";
 import Config from "../config.ts";
 
@@ -19,144 +19,190 @@ export default class SecretsService {
   private static replyWIFIPassword(ctx: MyContext, data: any): void {
     const text = `${data.value}`;
     ctx.reply(text);
-    return;
   }
 
   private static replyWIFIPasswordNotFound(ctx: MyContext): void {
     const text = `I don't know the WIFI password! Tell me?`;
     ctx.reply(text, { reply_markup: this.setWIFIPasswordButton });
-    return;
   }
 
   private static replyVoucherLink(ctx: MyContext, data: any): void {
     const text = `Here's the link for CDC Vouchers:\n${data.value}`;
     ctx.reply(text);
-    return;
   }
 
   private static replyVoucherLinkNotFound(ctx: MyContext): void {
     const text = `I don't know the link! Tell me?`;
     ctx.reply(text, { reply_markup: this.setVoucherLinkButton });
-    return;
   }
 
   public static async getWIFIPassword(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      try {
+        const chatExists: boolean = await ChatsService.checkChatExists(ctx);
+        if (!chatExists) ChatsService.replyChatNotStarted(ctx);
 
-      const data = await SecretsRepository.getSecretByKey(
-        ctx.chat.id,
-        Config.WIFI_PASSWORD_KEY
-      );
+        const data = await SecretsRepository.getSecretByKey(
+          ctx.chat.id,
+          Config.WIFI_PASSWORD_KEY
+        );
 
-      if (data) {
-        this.replyWIFIPassword(ctx, data);
-      } else {
-        this.replyWIFIPasswordNotFound(ctx);
+        if (data) {
+          this.replyWIFIPassword(ctx, data);
+        } else {
+          this.replyWIFIPasswordNotFound(ctx);
+        }
+      } catch (err) {
+        console.error(err);
       }
     }
   }
 
   public static async setWIFIPassword(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      try {
+        const chatExists: boolean = await ChatsService.checkChatExists(ctx);
+        if (!chatExists) ChatsService.replyChatNotStarted(ctx);
 
-      const input: string | undefined = ctx.match?.toString();
+        const chatId: number = ctx.chat.id;
+        const input: string | undefined = ctx.match?.toString();
+        if (!input) {
+          ctx.reply("You didn't tell me anything!");
+          return;
+        }
 
-      if (input) {
-        // update secret if key exists
-        const data = await SecretsRepository.updateSecret(
-          ctx.chat.id,
-          Config.WIFI_PASSWORD_KEY,
-          input
+        const existingSecret: Secret = await SecretsRepository.getSecretByKey(
+          chatId,
+          Config.WIFI_PASSWORD_KEY
         );
 
-        if (!data) {
-          // add new secret if key does not exist
+        if (!existingSecret) {
           await SecretsRepository.insertSecret(
-            ctx.chat.id,
+            chatId,
             Config.WIFI_PASSWORD_KEY,
             input
           );
+
+          ctx.reply("I'll remember it!");
+          return;
         }
+
+        const secret: Secret = {
+          id: existingSecret.id,
+          chatId: chatId,
+          key: existingSecret.key,
+          value: input,
+        };
+        await SecretsRepository.updateSecret(secret);
+
         ctx.reply("I'll remember it!");
         return;
+      } catch (err) {
+        console.error(err);
       }
-
-      ctx.reply("You didn't tell me anything!");
     }
   }
 
   public static async removeWIFIPassword(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      try {
+        const chatExists: boolean = await ChatsService.checkChatExists(ctx);
+        if (!chatExists) ChatsService.replyChatNotStarted(ctx);
 
-      await SecretsRepository.deleteSecret(
-        ctx.chat.id,
-        Config.WIFI_PASSWORD_KEY
-      );
+        await SecretsRepository.deleteSecret(
+          ctx.chat.id,
+          Config.WIFI_PASSWORD_KEY
+        );
 
-      ctx.reply("I forgot the WIFI password!");
+        ctx.reply("I forgot the WIFI password!");
+      } catch (err) {
+        console.error(err);
+      }
     }
   }
 
   public static async getVoucherLink(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      try {
+        const chatExists: boolean = await ChatsService.checkChatExists(ctx);
+        if (!chatExists) ChatsService.replyChatNotStarted(ctx);
 
-      const data = await SecretsRepository.getSecretByKey(
-        ctx.chat.id,
-        Config.VOUCHER_LINK_KEY
-      );
+        const data = await SecretsRepository.getSecretByKey(
+          ctx.chat.id,
+          Config.VOUCHER_LINK_KEY
+        );
 
-      if (data) {
-        this.replyVoucherLink(ctx, data);
-      } else {
-        this.replyVoucherLinkNotFound(ctx);
+        if (data) {
+          this.replyVoucherLink(ctx, data);
+        } else {
+          this.replyVoucherLinkNotFound(ctx);
+        }
+      } catch (err) {
+        console.error(err);
       }
     }
   }
 
   public static async setVoucherLink(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      try {
+        const chatExists: boolean = await ChatsService.checkChatExists(ctx);
+        if (!chatExists) ChatsService.replyChatNotStarted(ctx);
 
-      const input: string | undefined = ctx.match?.toString();
+        const chatId: number = ctx.chat.id;
+        const input: string | undefined = ctx.match?.toString();
+        if (!input) {
+          ctx.reply("You didn't tell me anything!");
+          return;
+        }
 
-      if (input) {
-        // update secret if key exists
-        const data = await SecretsRepository.updateSecret(
-          ctx.chat.id,
-          Config.VOUCHER_LINK_KEY,
-          input
+        const existingSecret: Secret = await SecretsRepository.getSecretByKey(
+          chatId,
+          Config.VOUCHER_LINK_KEY
         );
 
-        if (!data) {
-          // add new secret if key does not exist
+        if (!existingSecret) {
           await SecretsRepository.insertSecret(
-            ctx.chat.id,
+            chatId,
             Config.VOUCHER_LINK_KEY,
             input
           );
+
+          ctx.reply("I'll remember it!");
+          return;
         }
+
+        const secret: Secret = {
+          id: existingSecret.id,
+          chatId: chatId,
+          key: existingSecret.key,
+          value: input,
+        };
+        await SecretsRepository.updateSecret(secret);
+
         ctx.reply("I'll remember it!");
         return;
+      } catch (err) {
+        console.error(err);
       }
-
-      ctx.reply("You didn't tell me anything!");
     }
   }
 
   public static async removeVoucherLink(ctx: MyContext): Promise<void> {
     if (ctx.chat?.id) {
-      await ChatsRepository.insertChat(ctx.chat.id, ctx.chat.type);
+      try {
+        const chatExists: boolean = await ChatsService.checkChatExists(ctx);
+        if (!chatExists) ChatsService.replyChatNotStarted(ctx);
 
-      await SecretsRepository.deleteSecret(
-        ctx.chat.id,
-        Config.VOUCHER_LINK_KEY
-      );
+        await SecretsRepository.deleteSecret(
+          ctx.chat.id,
+          Config.VOUCHER_LINK_KEY
+        );
 
-      ctx.reply("I forgot the link for CDC Vouchers!");
+        ctx.reply("I forgot the CDC Vouchers link!");
+      } catch (err) {
+        console.error(err);
+      }
     }
   }
 }

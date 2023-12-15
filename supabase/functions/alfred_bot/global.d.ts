@@ -3,7 +3,6 @@ import {
   type Conversation,
   type ConversationFlavor,
 } from "https://deno.land/x/grammy_conversations@v1.1.2/conversation.ts";
-import { ChatType } from "./enum/chatType.enum.ts";
 
 export {};
 
@@ -14,6 +13,13 @@ declare global {
   interface Chat {
     id: number;
     type: ChatType;
+  }
+
+  enum ChatType {
+    PRIVATE = "private",
+    GROUP = "group",
+    SUPERGROUP = "supergroup",
+    CHANNEL = "channel",
   }
 
   interface Dinner {

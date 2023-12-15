@@ -5,7 +5,7 @@ export default class SecretsRepository {
   public static async getSecretByKey(
     chatId: number,
     key: string
-  ): Promise<Secret | undefined> {
+  ): Promise<Secret> {
     const query = await db
       .from(Config.SECRET_TABLENAME)
       .select()
@@ -13,13 +13,10 @@ export default class SecretsRepository {
       .eq("key", key);
     if (query.error) throw query.error;
 
-    if (!query.data) {
-      console.log(`[getSecretByKey] no secret found for key: ${key}`);
-      return undefined;
-    }
+    if (!query.data)
+      throw new Error(`[getSecretByKey] no secret found for key: ${key}`);
 
     const queryData: Secret = query.data[0] as Secret;
-    console.log(`[getSecretByKey] ${JSON.stringify(queryData)}`);
     return queryData;
   }
 
@@ -27,51 +24,49 @@ export default class SecretsRepository {
     chatId: number,
     key: string,
     value: string
-  ): Promise<Secret | undefined> {
+  ): Promise<Secret> {
     // check if key already exists
     const data: Secret | undefined = await this.getSecretByKey(chatId, key);
 
-    if (data) {
-      console.log(`[insertSecret] secret key already exists`);
-      return data;
-    }
+    if (data) throw new Error(`[insertSecret] secret key already exists`);
 
     const result = await db
       .from(Config.SECRET_TABLENAME)
-      .insert({ chatId: chatId, key: key, value: value })
+      .insert({
+        chatId: chatId,
+        key: key,
+        value: value,
+      })
       .select();
     if (result.error) throw result.error;
 
     const queryData: Secret = result.data[0] as Secret;
-    console.log(`[insertSecret] new secret created`);
-
     return queryData;
   }
 
   public static async updateSecret(
-    chatId: number,
-    key: string,
-    newValue: string
+    secret: Secret
   ): Promise<Secret | undefined> {
     // check if secret already exists
-    const data: Secret | undefined = await this.getSecretByKey(chatId, key);
+    const data: Secret | undefined = await this.getSecretByKey(
+      secret.chatId,
+      secret.key
+    );
 
-    if (!data) {
-      console.error(`[updateSecret] secret does not exist for key: ${key}`);
-      return undefined;
-    }
-
-    const secretId = data.id;
+    if (!data)
+      throw new Error(
+        `[updateSecret] secret does not exist for key: ${secret.key}`
+      );
 
     const result = await db
       .from(Config.SECRET_TABLENAME)
-      .update({ value: newValue })
-      .eq("id", secretId)
+      .update(secret)
+      .eq("id", data.id)
       .select();
     if (result.error) throw result.error;
 
     const queryData: Secret = result.data[0] as Secret;
-    console.log(`[updateSecret] secret updated for key: ${key}`);
+    console.log(`[updateSecret] secret updated for key: ${secret.key}`);
 
     return queryData;
   }
@@ -92,7 +87,6 @@ export default class SecretsRepository {
         .eq("id", secretId);
       if (result.error) throw result.error;
 
-      console.log(`[deleteSecret] secret deleted for key: ${key}`);
       return true;
     }
 

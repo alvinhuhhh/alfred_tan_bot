@@ -26,6 +26,10 @@ try {
     console.debug(ctx);
     await ChatsService.startChat(ctx);
   });
+  bot.callbackQuery("start-chat-callback", async (ctx: MyContext) => {
+    console.debug(ctx);
+    await ChatsService.startChat(ctx);
+  });
 
   bot.command("hello", async (ctx: MyContext) => {
     console.debug(ctx);

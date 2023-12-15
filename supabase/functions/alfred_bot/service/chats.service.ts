@@ -2,6 +2,11 @@ import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 import ChatsRepository from "../repository/chats.repository.ts";
 
 export default class ChatsService {
+  public static startChatButton: InlineKeyboard = new InlineKeyboard().text(
+    "Start chat",
+    "start-chat-callback"
+  );
+
   public static commandCatalog: InlineKeyboard = new InlineKeyboard()
     .text("See who's on tonight's dinner", "get-dinner-callback")
     .row()
@@ -11,36 +16,106 @@ export default class ChatsService {
     .row();
 
   public static async startChat(ctx: MyContext): Promise<void> {
-    const id: number = ctx.chat?.id ?? -1;
-    const type: string = ctx.chat?.type ?? "";
+    try {
+      const id: number = ctx.chat?.id ?? -1;
+      const type: string | undefined = ctx.chat?.type;
 
-    await ChatsRepository.insertChat(id, type);
+      if (id === -1 || type === undefined)
+        throw new Error("[startChat] id or chatType is undefined");
 
-    ctx.reply("Welcome! I am up and running!", {
-      reply_markup: this.commandCatalog,
-    });
+      const chat: Chat = {
+        id: id,
+        type: <ChatType>type,
+      };
+      await ChatsRepository.insertChat(chat);
+
+      ctx.reply("Welcome! I am up and running!", {
+        reply_markup: this.commandCatalog,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   public static async replyHello(ctx: MyContext): Promise<void> {
-    const id: number = ctx.chat?.id ?? -1;
-    const type: string = ctx.chat?.type ?? "";
+    try {
+      const id: number = ctx.chat?.id ?? -1;
+      const type: string | undefined = ctx.chat?.type;
 
-    await ChatsRepository.insertChat(id, type);
+      if (id === -1 || type === undefined)
+        throw new Error("[replyHello] id or chatType is undefined");
 
-    ctx.reply("Hello there! What can I do for you today?", {
-      reply_markup: this.commandCatalog,
-    });
+      const chat: Chat = {
+        id: id,
+        type: <ChatType>type,
+      };
+      await ChatsRepository.insertChat(chat);
+
+      ctx.reply("Hello there! What can I do for you today?", {
+        reply_markup: this.commandCatalog,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   public static async replyName(ctx: MyContext): Promise<void> {
-    const id: number = ctx.chat?.id ?? -1;
-    const type: string = ctx.chat?.type ?? "";
+    try {
+      const id: number = ctx.chat?.id ?? -1;
+      const type: string | undefined = ctx.chat?.type;
 
-    await ChatsRepository.insertChat(id, type);
+      if (id === -1 || type === undefined)
+        throw new Error("[replyName] id or chatType is undefined");
 
-    ctx.reply("How can I help?", {
-      reply_to_message_id: ctx.message?.message_id,
-      reply_markup: this.commandCatalog,
-    });
+      const chat: Chat = {
+        id: id,
+        type: <ChatType>type,
+      };
+      await ChatsRepository.insertChat(chat);
+
+      ctx.reply("How can I help?", {
+        reply_to_message_id: ctx.message?.message_id,
+        reply_markup: this.commandCatalog,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  public static async checkChatExists(
+    ctx?: MyContext,
+    chatId?: number
+  ): Promise<boolean> {
+    try {
+      if (ctx) {
+        const id: number | undefined = ctx.chat?.id;
+
+        if (id === undefined)
+          throw new Error("[checkChatExists] Chat id is undefined");
+
+        if (await ChatsRepository.getChatById(id)) return true;
+        return false;
+      }
+
+      if (chatId) {
+        if (await ChatsRepository.getChatById(chatId)) return true;
+        return false;
+      }
+
+      return false;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  }
+
+  public static replyChatNotStarted(ctx: MyContext): void {
+    try {
+      ctx.reply("I am not started yet! Start me up?", {
+        reply_markup: this.startChatButton,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 }

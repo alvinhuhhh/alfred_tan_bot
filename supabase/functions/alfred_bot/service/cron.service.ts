@@ -3,7 +3,6 @@ import DinnersService from "../service/dinners.service.ts";
 
 type RequestBody = {
   chatId: number;
-  chatType: string;
 };
 
 export default class CronService {
@@ -15,7 +14,7 @@ export default class CronService {
       const body: RequestBody = await JSON.parse(json);
 
       const message: string | undefined =
-        await DinnersService.startDinnerScheduled(body.chatId, body.chatType);
+        await DinnersService.startDinnerScheduled(body.chatId);
 
       if (!message) {
         return false;
