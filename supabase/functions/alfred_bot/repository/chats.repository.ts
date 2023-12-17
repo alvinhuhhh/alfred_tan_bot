@@ -17,7 +17,10 @@ export default class ChatsRepository {
     // check if chat already exists
     const data: Chat | undefined = await this.getChatById(chat.id);
 
-    if (data) throw new Error(`[insertChat] chat already exists`);
+    if (data) {
+      console.debug(`[insertChat] chat already exists`);
+      return data;
+    }
 
     const result = await db
       .from(Config.CHAT_TABLENAME)
