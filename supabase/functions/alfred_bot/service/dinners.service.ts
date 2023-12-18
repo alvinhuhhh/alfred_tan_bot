@@ -246,7 +246,10 @@ export default class DinnersService {
             id: existingDinner.id,
             chatId: chatId,
             date: new Date(existingDinner.date),
-            messageIds: existingDinner.messageIds,
+            messageIds: DinnersRepository.addMessageId(
+              existingDinner.messageIds,
+              messageId
+            ),
             yes: yes,
             no: no,
           };
@@ -307,7 +310,10 @@ export default class DinnersService {
             id: existingDinner.id,
             chatId: chatId,
             date: new Date(existingDinner.date),
-            messageIds: existingDinner.messageIds,
+            messageIds: DinnersRepository.addMessageId(
+              existingDinner.messageIds,
+              messageId
+            ),
             yes: yes,
             no: no,
           };
