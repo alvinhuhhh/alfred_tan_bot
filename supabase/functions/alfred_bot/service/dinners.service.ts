@@ -1,4 +1,5 @@
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
+import Util from "../util/util.ts";
 import ChatsService from "./chats.service.ts";
 import DinnersRepository from "../repository/dinners.repository.ts";
 
@@ -202,6 +203,11 @@ export default class DinnersService {
             no: no,
           };
 
+          if (Util.deepEqual(existingDinner, dinner)) {
+            // return if no change
+            return;
+          }
+
           const result = await DinnersRepository.updateDinner(dinner);
 
           // Update all messages in messageIds
@@ -265,6 +271,11 @@ export default class DinnersService {
             yes: yes,
             no: no,
           };
+
+          if (Util.deepEqual(existingDinner, dinner)) {
+            // return if no change
+            return;
+          }
 
           const result = await DinnersRepository.updateDinner(dinner);
 
