@@ -204,6 +204,7 @@ export default class DinnersService {
           };
 
           if (Util.deepEqual(existingDinner, dinner)) {
+            console.debug("No change in dinner");
             // return if no change
             return;
           }
@@ -273,6 +274,7 @@ export default class DinnersService {
           };
 
           if (Util.deepEqual(existingDinner, dinner)) {
+            console.debug("No change in dinner");
             // return if no change
             return;
           }
