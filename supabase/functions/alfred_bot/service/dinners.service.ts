@@ -203,9 +203,6 @@ export default class DinnersService {
             no: no,
           };
 
-          console.log(existingDinner);
-          console.log(dinner);
-
           if (Util.deepEqual(existingDinner, dinner)) {
             // Return if no change
             return;
@@ -274,9 +271,6 @@ export default class DinnersService {
             yes: yes,
             no: no,
           };
-
-          console.log(existingDinner);
-          console.log(dinner);
 
           if (Util.deepEqual(existingDinner, dinner)) {
             // Return if no change
