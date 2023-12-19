@@ -4,8 +4,6 @@ import {
   type ConversationFlavor,
 } from "https://deno.land/x/grammy_conversations@v1.1.2/conversation.ts";
 
-export {};
-
 declare global {
   type MyContext = Context & ConversationFlavor;
   type MyConversation = Conversation<MyContext>;

@@ -97,60 +97,8 @@ export default class DinnersService {
 
         const name: string | undefined = ctx.from?.first_name;
         const chatId: number = ctx.chat.id;
-        const messageId: number | undefined = ctx.message?.message_id;
-
-        if (name === undefined || messageId === undefined)
-          throw new Error(`[startDinner] name or messageId is undefined`);
-
-        const data = await DinnersRepository.getDinnerByDate(
-          chatId,
-          new Date()
-        );
-
-        if (!data) {
-          const result = await DinnersRepository.insertDinner(
-            chatId,
-            [messageId + 1],
-            new Date(),
-            [name],
-            []
-          );
-
-          this.replyDinnerDetails(ctx, result);
-          return;
-        }
-
-        const dinner: Dinner = {
-          id: data.id,
-          chatId: chatId,
-          messageIds: DinnersRepository.addMessageId(
-            data.messageIds,
-            messageId + 1
-          ),
-          date: new Date(data.date),
-          yes: data.yes,
-          no: data.no,
-        };
-
-        const result = await DinnersRepository.updateDinner(dinner);
-
-        this.replyDinnerDetails(ctx, result);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  }
-
-  public static async startDinnerCallback(ctx: MyContext): Promise<void> {
-    if (ctx.chat?.id) {
-      try {
-        const chatExists: boolean = await ChatsService.checkChatExists(ctx);
-        if (!chatExists) ChatsService.replyChatNotStarted(ctx);
-
-        const name: string | undefined = ctx.from?.first_name;
-        const chatId: number = ctx.chat.id;
         const messageId: number | undefined =
-          ctx.callbackQuery?.message?.message_id;
+          ctx.message?.message_id ?? ctx.callbackQuery?.message?.message_id;
 
         if (name === undefined || messageId === undefined)
           throw new Error(`[startDinner] name or messageId is undefined`);
@@ -222,7 +170,7 @@ export default class DinnersService {
         const name: string | undefined = ctx.from?.first_name;
         const chatId: number = ctx.chat.id;
         const messageId: number | undefined =
-          ctx.callbackQuery?.message?.message_id;
+          ctx.message?.message_id ?? ctx.callbackQuery?.message?.message_id;
 
         if (name === undefined || messageId === undefined)
           throw new Error(`[joinDinner] name or messageId is undefined`);
@@ -286,7 +234,7 @@ export default class DinnersService {
         const name: string | undefined = ctx.from?.first_name;
         const chatId: number = ctx.chat.id;
         const messageId: number | undefined =
-          ctx.callbackQuery?.message?.message_id;
+          ctx.message?.message_id ?? ctx.callbackQuery?.message?.message_id;
 
         if (name === undefined || messageId === undefined)
           throw new Error(`[leaveDinner] name or messageId is undefined`);
