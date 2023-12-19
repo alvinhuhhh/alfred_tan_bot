@@ -176,7 +176,7 @@ export default class DinnersService {
         if (name === undefined || messageId === undefined)
           throw new Error(`[joinDinner] name or messageId is undefined`);
 
-        const existingDinner = await DinnersRepository.getDinnerByDate(
+        const existingDinner: Dinner = await DinnersRepository.getDinnerByDate(
           chatId,
           new Date()
         );
@@ -202,6 +202,9 @@ export default class DinnersService {
             yes: yes,
             no: no,
           };
+
+          console.log(existingDinner);
+          console.log(dinner);
 
           if (Util.deepEqual(existingDinner, dinner)) {
             console.debug("No change in dinner");
@@ -246,7 +249,7 @@ export default class DinnersService {
         if (name === undefined || messageId === undefined)
           throw new Error(`[leaveDinner] name or messageId is undefined`);
 
-        const existingDinner = await DinnersRepository.getDinnerByDate(
+        const existingDinner: Dinner = await DinnersRepository.getDinnerByDate(
           chatId,
           new Date()
         );
@@ -272,6 +275,9 @@ export default class DinnersService {
             yes: yes,
             no: no,
           };
+
+          console.log(existingDinner);
+          console.log(dinner);
 
           if (Util.deepEqual(existingDinner, dinner)) {
             console.debug("No change in dinner");
