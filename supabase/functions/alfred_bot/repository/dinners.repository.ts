@@ -21,6 +21,10 @@ export default class DinnersRepository {
       );
 
     const queryData: Dinner = query.data[0] as Dinner;
+
+    // Transform date to JavaScript Date
+    queryData.date = new Date(queryData.date);
+
     return queryData;
   }
 
