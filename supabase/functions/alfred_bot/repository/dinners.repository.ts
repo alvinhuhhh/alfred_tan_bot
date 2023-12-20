@@ -14,8 +14,11 @@ export default class DinnersRepository {
       .eq("chatId", chatId)
       .eq("date", ISODate);
     if (query.error) throw query.error;
+    console.log(`[getDinnerByDate] ${query}`);
 
     if (!query.data) {
+      console.log(`[getDinnerByDate] no query data`);
+
       return undefined;
     }
 
