@@ -18,6 +18,7 @@ export default class DinnersService {
 
     const formattedDate = data.date
       .toISOString()
+      .split("T")[0]
       .split("-")
       .reverse()
       .join("/");
