@@ -9,24 +9,23 @@ export default class DinnersRepository {
   ): Promise<Dinner | undefined> {
     const ISODate: string = date.toISOString().split("T")[0];
 
-    const query: PostgrestSingleResponse<DbResponse[]> = await db
+    const dbResponse: PostgrestSingleResponse<DbResponse[]> = await db
       .from(Config.DINNER_TABLENAME)
       .select()
       .eq("chatId", chatId)
       .eq("date", ISODate);
 
-    if (query.error) console.error(query.error);
+    if (dbResponse.error) console.error(dbResponse.error);
 
-    if (!query.data || query.data.length === 0) {
+    if (!dbResponse.data || dbResponse.data.length === 0) {
       return;
     }
 
-    const queryData: Dinner = query.data[0] as Dinner;
-
+    const dbData: Dinner = dbResponse.data[0] as Dinner;
     // Transform date to JavaScript Date
-    queryData.date = new Date(queryData.date);
+    dbData.date = new Date(dbData.date);
 
-    return queryData;
+    return dbData;
   }
 
   public static async insertDinner(
@@ -37,14 +36,14 @@ export default class DinnersRepository {
     no: string[]
   ): Promise<Dinner | undefined> {
     // check if dinner already exists
-    const data: Dinner | undefined = await this.getDinnerByDate(
+    const existingDinner: Dinner | undefined = await this.getDinnerByDate(
       chatId,
       new Date(date)
     );
 
-    if (data) throw new Error(`[insertDinner] dinner already exists`);
+    if (existingDinner) throw new Error(`[insertDinner] dinner already exists`);
 
-    const result: PostgrestSingleResponse<DbResponse[]> = await db
+    const dbResponse: PostgrestSingleResponse<DbResponse[]> = await db
       .from(Config.DINNER_TABLENAME)
       .insert({
         chatId: chatId,
@@ -54,35 +53,51 @@ export default class DinnersRepository {
         no: no,
       })
       .select();
-    if (result.error) console.error(result.error);
+    if (dbResponse.error) console.error(dbResponse.error);
 
-    return result.data ? (result.data[0] as Dinner) : undefined;
+    if (!dbResponse.data || dbResponse.data.length === 0) {
+      return;
+    }
+
+    const dbData: Dinner = dbResponse.data[0] as Dinner;
+    // Transform date to JavaScript Date
+    dbData.date = new Date(dbData.date);
+
+    return dbData;
   }
 
   public static async updateDinner(
     dinner: Dinner
   ): Promise<Dinner | undefined> {
     // check if dinner already exists
-    const data: Dinner | undefined = await this.getDinnerByDate(
+    const existingDinner: Dinner | undefined = await this.getDinnerByDate(
       dinner.chatId,
       new Date(dinner.date)
     );
 
-    if (!data)
+    if (!existingDinner)
       throw new Error(
         `[updateDinner] dinner does not exist for date: ${
           dinner.date.toISOString().split("T")[0]
         }`
       );
 
-    const result: PostgrestSingleResponse<DbResponse[]> = await db
+    const dbResponse: PostgrestSingleResponse<DbResponse[]> = await db
       .from(Config.DINNER_TABLENAME)
       .update(dinner)
       .eq("id", dinner.id)
       .select();
-    if (result.error) console.error(result.error);
+    if (dbResponse.error) console.error(dbResponse.error);
 
-    return result.data ? (result.data[0] as Dinner) : undefined;
+    if (!dbResponse.data || dbResponse.data.length === 0) {
+      return;
+    }
+
+    const dbData: Dinner = dbResponse.data[0] as Dinner;
+    // Transform date to JavaScript Date
+    dbData.date = new Date(dbData.date);
+
+    return dbData;
   }
 
   public static async deleteDinner(
@@ -90,18 +105,18 @@ export default class DinnersRepository {
     date: Date
   ): Promise<boolean> {
     // check if dinner already exists
-    const data = await this.getDinnerByDate(chatId, new Date(date));
+    const existingDinner = await this.getDinnerByDate(chatId, new Date(date));
 
-    if (data) {
-      const dinnerId: number = data.id;
+    if (existingDinner) {
+      const dinnerId: number = existingDinner.id;
 
-      const result: PostgrestSingleResponse<null> = await db
+      const dbResponse: PostgrestSingleResponse<null> = await db
         .from(Config.DINNER_TABLENAME)
         .delete()
         .eq("id", dinnerId);
 
-      if (result.error) {
-        console.error(result.error);
+      if (dbResponse.error) {
+        console.error(dbResponse.error);
         return false;
       }
 
