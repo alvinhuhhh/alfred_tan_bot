@@ -6,7 +6,6 @@ export default class DinnersRepository {
     chatId: number,
     date: Date
   ): Promise<Dinner | undefined> {
-    console.log(date);
     const ISODate: string = date.toISOString().split("T")[0];
 
     const query = await db
@@ -21,6 +20,7 @@ export default class DinnersRepository {
     }
 
     const queryData: Dinner = query.data[0] as Dinner;
+    console.log(`[getDinnerByDate] ${queryData}`);
 
     // Transform date to JavaScript Date
     queryData.date = new Date(queryData.date);
