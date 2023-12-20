@@ -14,6 +14,8 @@ export default class DinnersService {
     .text("Join Dinner", "join-dinner-callback");
 
   public static parseDinnerDetails(data: Dinner): string {
+    console.log(data.date);
+
     const formattedDate = data.date
       .toISOString()
       .split("-")
