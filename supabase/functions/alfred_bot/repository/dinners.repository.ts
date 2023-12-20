@@ -35,9 +35,11 @@ export default class DinnersRepository {
     yes: string[],
     no: string[]
   ): Promise<Dinner> {
-    console.log(date);
     // check if dinner already exists
-    const data: Dinner | undefined = await this.getDinnerByDate(chatId, date);
+    const data: Dinner | undefined = await this.getDinnerByDate(
+      chatId,
+      new Date(date)
+    );
 
     if (data) throw new Error(`[insertDinner] dinner already exists`);
 
@@ -61,7 +63,7 @@ export default class DinnersRepository {
     // check if dinner already exists
     const data: Dinner | undefined = await this.getDinnerByDate(
       dinner.chatId,
-      dinner.date
+      new Date(dinner.date)
     );
 
     if (!data)
@@ -87,7 +89,7 @@ export default class DinnersRepository {
     date: Date
   ): Promise<boolean> {
     // check if dinner already exists
-    const data = await this.getDinnerByDate(chatId, date);
+    const data = await this.getDinnerByDate(chatId, new Date(date));
 
     if (data) {
       const dinnerId: number = data.id;
