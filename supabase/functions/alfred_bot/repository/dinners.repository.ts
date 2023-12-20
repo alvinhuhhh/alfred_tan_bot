@@ -5,7 +5,7 @@ export default class DinnersRepository {
   public static async getDinnerByDate(
     chatId: number,
     date: Date
-  ): Promise<Dinner> {
+  ): Promise<Dinner | undefined> {
     const ISODate: string = date.toISOString().split("T")[0];
 
     const query = await db
@@ -15,10 +15,9 @@ export default class DinnersRepository {
       .eq("date", ISODate);
     if (query.error) throw query.error;
 
-    if (!query.data)
-      throw new Error(
-        `[getDinnerByDate] dinner does not exist for date: ${ISODate}`
-      );
+    if (!query.data) {
+      return undefined;
+    }
 
     const queryData: Dinner = query.data[0] as Dinner;
 

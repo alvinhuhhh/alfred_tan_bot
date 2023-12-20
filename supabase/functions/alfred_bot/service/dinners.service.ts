@@ -60,10 +60,8 @@ export default class DinnersService {
         if (messageId === undefined)
           throw new Error(`[getDinner] messageId is undefined`);
 
-        const data = await DinnersRepository.getDinnerByDate(
-          chatId,
-          new Date()
-        );
+        const data: Dinner | undefined =
+          await DinnersRepository.getDinnerByDate(chatId, new Date());
 
         if (data) {
           const dinner: Dinner = {
@@ -104,10 +102,8 @@ export default class DinnersService {
         if (name === undefined || messageId === undefined)
           throw new Error(`[startDinner] name or messageId is undefined`);
 
-        const data = await DinnersRepository.getDinnerByDate(
-          chatId,
-          new Date()
-        );
+        const data: Dinner | undefined =
+          await DinnersRepository.getDinnerByDate(chatId, new Date());
 
         if (!data) {
           const result = await DinnersRepository.insertDinner(
@@ -143,7 +139,9 @@ export default class DinnersService {
     }
   }
 
-  public static async startDinnerScheduled(chatId: number): Promise<string> {
+  public static async startDinnerScheduled(
+    chatId: number
+  ): Promise<string | undefined> {
     const chatExists: boolean = await ChatsService.checkChatExists(
       undefined,
       chatId
@@ -151,15 +149,22 @@ export default class DinnersService {
     if (!chatExists)
       console.error("[startDinnerScheduled] Chat does not exist");
 
-    const data = await DinnersRepository.insertDinner(
+    const data: Dinner | undefined = await DinnersRepository.getDinnerByDate(
       chatId,
-      [],
-      new Date(),
-      [],
-      []
+      new Date()
     );
 
-    return this.parseDinnerDetails(data);
+    if (!data) {
+      const result: Dinner = await DinnersRepository.insertDinner(
+        chatId,
+        [],
+        new Date(),
+        [],
+        []
+      );
+
+      return this.parseDinnerDetails(result);
+    }
   }
 
   public static async joinDinner(ctx: MyContext): Promise<void> {
@@ -176,10 +181,8 @@ export default class DinnersService {
         if (name === undefined || messageId === undefined)
           throw new Error(`[joinDinner] name or messageId is undefined`);
 
-        const existingDinner: Dinner = await DinnersRepository.getDinnerByDate(
-          chatId,
-          new Date()
-        );
+        const existingDinner: Dinner | undefined =
+          await DinnersRepository.getDinnerByDate(chatId, new Date());
         if (existingDinner) {
           let yes: Array<string> = existingDinner.yes;
           let no: Array<string> = existingDinner.no;
@@ -245,10 +248,8 @@ export default class DinnersService {
         if (name === undefined || messageId === undefined)
           throw new Error(`[leaveDinner] name or messageId is undefined`);
 
-        const existingDinner: Dinner = await DinnersRepository.getDinnerByDate(
-          chatId,
-          new Date()
-        );
+        const existingDinner: Dinner | undefined =
+          await DinnersRepository.getDinnerByDate(chatId, new Date());
         if (existingDinner) {
           let yes: Array<string> = existingDinner.yes;
           let no: Array<string> = existingDinner.no;
