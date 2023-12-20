@@ -6,6 +6,7 @@ export default class DinnersRepository {
     chatId: number,
     date: Date
   ): Promise<Dinner | undefined> {
+    console.log(date);
     const ISODate: string = date.toISOString().split("T")[0];
 
     const query = await db
@@ -34,6 +35,7 @@ export default class DinnersRepository {
     yes: string[],
     no: string[]
   ): Promise<Dinner> {
+    console.log(date);
     // check if dinner already exists
     const data: Dinner | undefined = await this.getDinnerByDate(chatId, date);
 
