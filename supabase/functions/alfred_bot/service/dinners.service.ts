@@ -13,8 +13,12 @@ export default class DinnersService {
     .text("Leave Dinner", "leave-dinner-callback")
     .text("Join Dinner", "join-dinner-callback");
 
-  public static parseDinnerDetails(data: any): string {
-    const formattedDate = data.date.split("-").reverse().join("/");
+  public static parseDinnerDetails(data: Dinner): string {
+    const formattedDate = data.date
+      .toISOString()
+      .split("-")
+      .reverse()
+      .join("/");
     let yes = "";
     let no = "";
 
@@ -34,7 +38,7 @@ export default class DinnersService {
     return text;
   }
 
-  private static replyDinnerDetails(ctx: MyContext, data: any): void {
+  private static replyDinnerDetails(ctx: MyContext, data: Dinner): void {
     ctx.reply(this.parseDinnerDetails(data), {
       parse_mode: "HTML",
       reply_markup: this.joinLeaveDinnerButton,
@@ -45,6 +49,10 @@ export default class DinnersService {
     ctx.reply("Dinner not started for tonight. Start one now?", {
       reply_markup: this.startDinnerButton,
     });
+  }
+
+  private static replyError(ctx: MyContext): void {
+    ctx.reply("An error occurred, please try me again later");
   }
 
   public static async getDinner(ctx: MyContext): Promise<void> {
@@ -106,13 +114,18 @@ export default class DinnersService {
           await DinnersRepository.getDinnerByDate(chatId, new Date());
 
         if (!data) {
-          const result = await DinnersRepository.insertDinner(
-            chatId,
-            [messageId + 1],
-            new Date(),
-            [name],
-            []
-          );
+          const result: Dinner | undefined =
+            await DinnersRepository.insertDinner(
+              chatId,
+              [messageId + 1],
+              new Date(),
+              [name],
+              []
+            );
+          if (!result) {
+            this.replyError(ctx);
+            return;
+          }
 
           this.replyDinnerDetails(ctx, result);
           return;
@@ -130,7 +143,13 @@ export default class DinnersService {
           no: data.no,
         };
 
-        const result = await DinnersRepository.updateDinner(dinner);
+        const result: Dinner | undefined = await DinnersRepository.updateDinner(
+          dinner
+        );
+        if (!result) {
+          this.replyError(ctx);
+          return;
+        }
 
         this.replyDinnerDetails(ctx, result);
       } catch (err) {
@@ -155,13 +174,15 @@ export default class DinnersService {
     );
 
     if (!data) {
-      const result: Dinner = await DinnersRepository.insertDinner(
+      const result: Dinner | undefined = await DinnersRepository.insertDinner(
         chatId,
         [],
         new Date(),
         [],
         []
       );
+
+      if (!result) return;
 
       return this.parseDinnerDetails(result);
     }
@@ -211,7 +232,8 @@ export default class DinnersService {
             return;
           }
 
-          const result = await DinnersRepository.updateDinner(dinner);
+          const result: Dinner | undefined =
+            await DinnersRepository.updateDinner(dinner);
 
           // Update all messages in messageIds
           if (result?.messageIds) {
@@ -278,7 +300,8 @@ export default class DinnersService {
             return;
           }
 
-          const result = await DinnersRepository.updateDinner(dinner);
+          const result: Dinner | undefined =
+            await DinnersRepository.updateDinner(dinner);
 
           // Update all messages in messageIds
           if (result?.messageIds) {

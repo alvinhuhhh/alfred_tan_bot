@@ -8,6 +8,10 @@ declare global {
   type MyContext = Context & ConversationFlavor;
   type MyConversation = Conversation<MyContext>;
 
+  interface DbResponse {
+    [x: string]: any;
+  }
+
   interface Chat {
     id: number;
     type: ChatType;

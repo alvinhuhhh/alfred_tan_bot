@@ -1,6 +1,6 @@
+import { PostgrestSingleResponse } from "https://esm.sh/v124/@supabase/postgrest-js@1.7.0/dist/module/index.js";
 import db from "./db.repository.ts";
 import Config from "../config.ts";
-import { PostgrestSingleResponse } from "https://esm.sh/v124/@supabase/postgrest-js@1.7.0/dist/module/index.js";
 
 export default class DinnersRepository {
   public static async getDinnerByDate(
@@ -9,22 +9,19 @@ export default class DinnersRepository {
   ): Promise<Dinner | undefined> {
     const ISODate: string = date.toISOString().split("T")[0];
 
-    const query: PostgrestSingleResponse<{ [x: string]: any }[]> = await db
+    const query: PostgrestSingleResponse<DbResponse[]> = await db
       .from(Config.DINNER_TABLENAME)
       .select()
       .eq("chatId", chatId)
       .eq("date", ISODate);
-    if (query.error) throw query.error;
-    console.log(`[getDinnerByDate] ${JSON.stringify(query)}`);
 
-    if (!query.data) {
-      console.log(`[getDinnerByDate] no query data`);
+    if (query.error) console.error(query.error);
 
-      return undefined;
+    if (!query.data || query.data.length === 0) {
+      return;
     }
 
     const queryData: Dinner = query.data[0] as Dinner;
-    console.log(`[getDinnerByDate] ${queryData}`);
 
     // Transform date to JavaScript Date
     queryData.date = new Date(queryData.date);
@@ -38,7 +35,7 @@ export default class DinnersRepository {
     date: Date,
     yes: string[],
     no: string[]
-  ): Promise<Dinner> {
+  ): Promise<Dinner | undefined> {
     // check if dinner already exists
     const data: Dinner | undefined = await this.getDinnerByDate(
       chatId,
@@ -47,7 +44,7 @@ export default class DinnersRepository {
 
     if (data) throw new Error(`[insertDinner] dinner already exists`);
 
-    const result = await db
+    const result: PostgrestSingleResponse<DbResponse[]> = await db
       .from(Config.DINNER_TABLENAME)
       .insert({
         chatId: chatId,
@@ -57,13 +54,14 @@ export default class DinnersRepository {
         no: no,
       })
       .select();
-    if (result.error) throw result.error;
+    if (result.error) console.error(result.error);
 
-    const queryData: Dinner = result.data[0] as Dinner;
-    return queryData;
+    return result.data ? (result.data[0] as Dinner) : undefined;
   }
 
-  public static async updateDinner(dinner: Dinner): Promise<Dinner> {
+  public static async updateDinner(
+    dinner: Dinner
+  ): Promise<Dinner | undefined> {
     // check if dinner already exists
     const data: Dinner | undefined = await this.getDinnerByDate(
       dinner.chatId,
@@ -77,15 +75,14 @@ export default class DinnersRepository {
         }`
       );
 
-    const result = await db
+    const result: PostgrestSingleResponse<DbResponse[]> = await db
       .from(Config.DINNER_TABLENAME)
       .update(dinner)
       .eq("id", dinner.id)
       .select();
-    if (result.error) throw result.error;
+    if (result.error) console.error(result.error);
 
-    const queryData: Dinner = result.data[0] as Dinner;
-    return queryData;
+    return result.data ? (result.data[0] as Dinner) : undefined;
   }
 
   public static async deleteDinner(
@@ -98,11 +95,15 @@ export default class DinnersRepository {
     if (data) {
       const dinnerId: number = data.id;
 
-      const result = await db
+      const result: PostgrestSingleResponse<null> = await db
         .from(Config.DINNER_TABLENAME)
         .delete()
         .eq("id", dinnerId);
-      if (result.error) throw result.error;
+
+      if (result.error) {
+        console.error(result.error);
+        return false;
+      }
 
       return true;
     }
