@@ -22,6 +22,8 @@ export default class DinnersService {
       .reverse()
       .join("/");
 
+    console.log(formattedDate);
+
     let yes = "";
     let no = "";
 
