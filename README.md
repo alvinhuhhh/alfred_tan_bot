@@ -1,16 +1,30 @@
 # Alfred
 
-Alfred is a Telegram bot that handles administrative duties for my family.
+Alfred is a Telegram bot that handles repetitive administrative duties for families.
 
 ## Key Features
 
-- Dinner attendance
+- Dinner attendance - automated!
 
-- Car usage booking
+- Car usage management
 
-- Government voucher tracker
+- Remembering the CDC voucher link
 
 - Remembering the WIFI password
+
+## Roadmap
+
+:white_check_mark: Dinner attendance
+
+:white_check_mark: Remembering CDC Voucher links
+
+:white_check_mark: Remembering WIFI passwords
+
+:construction: Car usage management
+
+:construction: Dinner attendance cron schedule setting
+
+:construction: Family calendar for events and celebrations
 
 ## Application Stack
 
