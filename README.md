@@ -2,6 +2,10 @@
 
 Alfred is a Telegram bot that handles repetitive administrative duties for families.
 
+## Telegram Link
+
+[Alfred](https://t.me/alfred_tan_bot)
+
 ## Key Features
 
 - Dinner attendance - automated!
