@@ -8,14 +8,14 @@ declare global {
   type MyContext = Context & ConversationFlavor;
   type MyConversation = Conversation<MyContext>;
 
-  interface DbResponse {
+  type DbResponse = {
     [x: string]: any;
-  }
+  };
 
-  interface Chat {
+  type Chat = {
     id: number;
     type: ChatType;
-  }
+  };
 
   enum ChatType {
     PRIVATE = "private",
@@ -24,19 +24,19 @@ declare global {
     CHANNEL = "channel",
   }
 
-  interface Dinner {
+  type Dinner = {
     id: number;
     chatId: number;
     messageIds: number[];
     date: Date;
     yes: string[];
     no: string[];
-  }
+  };
 
-  interface Secret {
+  type Secret = {
     id: number;
     chatId: number;
     key: string;
     value: string;
-  }
+  };
 }
