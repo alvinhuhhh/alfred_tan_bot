@@ -237,16 +237,8 @@ export default class DinnersService {
           const result: Dinner | undefined =
             await DinnersRepository.updateDinner(dinner);
 
-          // Update all messages in messageIds
-          if (result?.messageIds) {
-            for (const messageId of result.messageIds) {
-              ctx.api.editMessageText(
-                chatId,
-                messageId,
-                this.parseDinnerDetails(result),
-                { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
-              );
-            }
+          if (result) {
+            this.replyDinnerDetails(ctx, result);
           }
           return;
         } else {
@@ -305,16 +297,8 @@ export default class DinnersService {
           const result: Dinner | undefined =
             await DinnersRepository.updateDinner(dinner);
 
-          // Update all messages in messageIds
-          if (result?.messageIds) {
-            for (const messageId of result.messageIds) {
-              ctx.api.editMessageText(
-                chatId,
-                messageId,
-                this.parseDinnerDetails(result),
-                { parse_mode: "HTML", reply_markup: this.joinLeaveDinnerButton }
-              );
-            }
+          if (result) {
+            this.replyDinnerDetails(ctx, result);
           }
           return;
         } else {
