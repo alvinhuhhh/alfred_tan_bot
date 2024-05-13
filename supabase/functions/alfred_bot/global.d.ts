@@ -5,8 +5,8 @@ import {
 } from "https://deno.land/x/grammy_conversations@v1.2.0/conversation.ts";
 
 declare global {
-  type MyContext = Context & ConversationFlavor;
-  type MyConversation = Conversation<MyContext>;
+  // type MyContext = Context & ConversationFlavor;
+  // type MyConversation = Conversation<MyContext>;
 
   type DbResponse = {
     [x: string]: any;

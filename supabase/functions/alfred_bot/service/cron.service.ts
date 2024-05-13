@@ -1,4 +1,5 @@
-import { Bot } from "https://deno.land/x/grammy@v1.16.1/mod.ts";
+import { Context } from "https://deno.land/x/grammy@v1.23.0/mod.ts";
+import { Bot } from "https://deno.land/x/grammy@v1.23.0/mod.ts";
 import DinnersService from "../service/dinners.service.ts";
 
 type RequestBody = {
@@ -7,7 +8,7 @@ type RequestBody = {
 
 export default class CronService {
   public static async handleCronTrigger(
-    bot: Bot<MyContext>,
+    bot: Bot<Context>,
     json: string
   ): Promise<boolean> {
     try {

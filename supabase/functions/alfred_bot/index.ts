@@ -1,7 +1,8 @@
 import {
   Bot,
   webhookCallback,
-} from "https://deno.land/x/grammy@v1.16.1/mod.ts";
+  Context,
+} from "https://deno.land/x/grammy@v1.23.0/mod.ts";
 
 import ChatsService from "./service/chats.service.ts";
 import DinnersService from "./service/dinners.service.ts";
@@ -14,124 +15,124 @@ try {
   if (!token) {
     throw new Error("BOT_TOKEN is unset");
   }
-  const bot = new Bot<MyContext>(token);
+  const bot = new Bot<Context>(token);
 
   // Basic chat commands
-  bot.hears(/\balfred\b/i, async (ctx: MyContext) => {
+  bot.hears(/\balfred\b/i, async (ctx: Context) => {
     console.debug(ctx);
     await ChatsService.replyName(ctx);
   });
 
-  bot.command("start", async (ctx: MyContext) => {
+  bot.command("start", async (ctx: Context) => {
     console.debug(ctx);
     await ChatsService.startChat(ctx);
   });
-  bot.callbackQuery("start-chat-callback", async (ctx: MyContext) => {
+  bot.callbackQuery("start-chat-callback", async (ctx: Context) => {
     console.debug(ctx);
     await ChatsService.startChat(ctx);
   });
 
-  bot.command("hello", async (ctx: MyContext) => {
+  bot.command("hello", async (ctx: Context) => {
     console.debug(ctx);
     await ChatsService.replyHello(ctx);
   });
 
   // Dinners
   // Handle the /getdinner command
-  bot.command("getdinner", async (ctx: MyContext) => {
+  bot.command("getdinner", async (ctx: Context) => {
     console.debug(ctx);
     await DinnersService.getDinner(ctx);
   });
-  bot.callbackQuery("get-dinner-callback", async (ctx: MyContext) => {
+  bot.callbackQuery("get-dinner-callback", async (ctx: Context) => {
     console.debug(ctx);
     await DinnersService.getDinner(ctx);
   });
 
   // Handle the /startdinner command
-  bot.command("startdinner", async (ctx: MyContext) => {
+  bot.command("startdinner", async (ctx: Context) => {
     console.debug(ctx);
     await DinnersService.startDinner(ctx);
   });
-  bot.callbackQuery("start-dinner-callback", async (ctx: MyContext) => {
+  bot.callbackQuery("start-dinner-callback", async (ctx: Context) => {
     console.debug(ctx);
     await DinnersService.startDinner(ctx);
   });
 
   // Handle the /joindinner command
-  bot.command("joindinner", async (ctx: MyContext) => {
+  bot.command("joindinner", async (ctx: Context) => {
     console.debug(ctx);
     await DinnersService.joinDinner(ctx);
   });
-  bot.callbackQuery("join-dinner-callback", async (ctx: MyContext) => {
+  bot.callbackQuery("join-dinner-callback", async (ctx: Context) => {
     console.debug(ctx);
     await DinnersService.joinDinner(ctx);
   });
 
   // Handle the /leavedinner command
-  bot.command("leavedinner", async (ctx: MyContext) => {
+  bot.command("leavedinner", async (ctx: Context) => {
     console.debug(ctx);
     await DinnersService.leaveDinner(ctx);
   });
-  bot.callbackQuery("leave-dinner-callback", async (ctx: MyContext) => {
+  bot.callbackQuery("leave-dinner-callback", async (ctx: Context) => {
     console.debug(ctx);
     await DinnersService.leaveDinner(ctx);
   });
 
   // Handle the /enddinner command
-  bot.command("enddinner", async (ctx: MyContext) => {
+  bot.command("enddinner", async (ctx: Context) => {
     console.debug(ctx);
     await DinnersService.endDinner(ctx);
   });
 
   // Secrets
   // Handle the /getwifipassword command
-  bot.command("getwifipassword", async (ctx: MyContext) => {
+  bot.command("getwifipassword", async (ctx: Context) => {
     console.debug(ctx);
     await SecretsService.getWIFIPassword(ctx);
   });
-  bot.callbackQuery("get-wifi-password-callback", async (ctx: MyContext) => {
+  bot.callbackQuery("get-wifi-password-callback", async (ctx: Context) => {
     console.debug(ctx);
     await SecretsService.getWIFIPassword(ctx);
   });
 
   // Handle the /setwifipassword command
-  bot.command("setwifipassword", async (ctx: MyContext) => {
+  bot.command("setwifipassword", async (ctx: Context) => {
     console.debug(ctx);
     await SecretsService.setWIFIPassword(ctx);
   });
-  bot.callbackQuery("set-wifi-password-callback", async (ctx: MyContext) => {
+  bot.callbackQuery("set-wifi-password-callback", async (ctx: Context) => {
     console.debug(ctx);
     await SecretsService.setWIFIPassword(ctx);
   });
 
   // Handle the /removewifipassword command
-  bot.command("removewifipassword", async (ctx: MyContext) => {
+  bot.command("removewifipassword", async (ctx: Context) => {
     console.debug(ctx);
     await SecretsService.removeWIFIPassword(ctx);
   });
 
   // Handle the /getcdcvouchers command
-  bot.command("getcdcvouchers", async (ctx: MyContext) => {
+  bot.command("getcdcvouchers", async (ctx: Context) => {
     console.debug(ctx);
     await SecretsService.getVoucherLink(ctx);
   });
-  bot.callbackQuery("get-voucher-link-callback", async (ctx: MyContext) => {
+  bot.callbackQuery("get-voucher-link-callback", async (ctx: Context) => {
     console.debug(ctx);
     await SecretsService.getVoucherLink(ctx);
   });
 
   // Handle the /setcdcvoucherlink command
-  bot.command("setcdcvoucherlink", async (ctx: MyContext) => {
+  bot.command("setcdcvoucherlink", async (ctx: Context) => {
     console.debug(ctx);
     await SecretsService.setVoucherLink(ctx);
   });
-  bot.callbackQuery("set-voucher-link-callback", async (ctx: MyContext) => {
+  bot.callbackQuery("set-voucher-link-callback", async (ctx: Context) => {
     console.debug(ctx);
     await SecretsService.setVoucherLink(ctx);
   });
 
   // Handle the /removecdcvoucherlink command
-  bot.command("removecdcvoucherlink", async (ctx: MyContext) => {
+  bot.command("removecdcvoucherlink", async (ctx: Context) => {
     console.debug(ctx);
     await SecretsService.removeVoucherLink(ctx);
   });

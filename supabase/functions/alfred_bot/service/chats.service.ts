@@ -1,3 +1,4 @@
+import { Context } from "https://deno.land/x/grammy@v1.23.0/mod.ts";
 import { InlineKeyboard } from "https://lib.deno.dev/x/grammy@v1/mod.ts";
 import ChatsRepository from "../repository/chats.repository.ts";
 
@@ -15,7 +16,7 @@ export default class ChatsService {
     .text("Ask for the link for CDC Vouchers", "get-voucher-link-callback")
     .row();
 
-  public static async startChat(ctx: MyContext): Promise<void> {
+  public static async startChat(ctx: Context): Promise<void> {
     try {
       const id: number = ctx.chat?.id ?? -1;
       const type: string | undefined = ctx.chat?.type;
@@ -37,7 +38,7 @@ export default class ChatsService {
     }
   }
 
-  public static async replyHello(ctx: MyContext): Promise<void> {
+  public static async replyHello(ctx: Context): Promise<void> {
     try {
       const id: number = ctx.chat?.id ?? -1;
       const type: string | undefined = ctx.chat?.type;
@@ -59,7 +60,7 @@ export default class ChatsService {
     }
   }
 
-  public static async replyName(ctx: MyContext): Promise<void> {
+  public static async replyName(ctx: Context): Promise<void> {
     try {
       const id: number = ctx.chat?.id ?? -1;
       const type: string | undefined = ctx.chat?.type;
@@ -83,7 +84,7 @@ export default class ChatsService {
   }
 
   public static async checkChatExists(
-    ctx?: MyContext,
+    ctx?: Context,
     chatId?: number
   ): Promise<boolean> {
     try {
@@ -109,7 +110,7 @@ export default class ChatsService {
     }
   }
 
-  public static replyChatNotStarted(ctx: MyContext): void {
+  public static replyChatNotStarted(ctx: Context): void {
     try {
       ctx.reply("I am not started yet! Start me up?", {
         reply_markup: this.startChatButton,
