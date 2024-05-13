@@ -138,10 +138,11 @@ try {
   });
 
   // Create webhook callback
-  const handleUpdate = webhookCallback(bot, "serveHttp");
+  const handleUpdate = webhookCallback(bot, "std/http");
 
   Deno.serve(async (req: Request) => {
     console.debug(`${req.method} ${req.url}`);
+    console.debug(`${JSON.stringify(req.headers)}`);
     const url = new URL(req.url);
 
     if (req.method === "GET" && url.pathname === "/alfred_bot/ping") {
