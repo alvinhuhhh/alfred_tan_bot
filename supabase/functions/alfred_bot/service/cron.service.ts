@@ -1,5 +1,4 @@
-import { Context } from "https://deno.land/x/grammy@v1.23.0/mod.ts";
-import { Bot } from "https://deno.land/x/grammy@v1.23.0/mod.ts";
+import { Bot, Context } from "https://deno.land/x/grammy@v1.23.0/mod.ts";
 import DinnersService from "../service/dinners.service.ts";
 
 type RequestBody = {

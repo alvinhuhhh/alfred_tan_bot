@@ -138,7 +138,7 @@ try {
   });
 
   // Create webhook callback
-  const handleUpdate = webhookCallback(bot, "std/http");
+  const handleUpdate = webhookCallback(bot, "serveHttp");
 
   Deno.serve(async (req: Request) => {
     console.debug(`${req.method} ${req.url}`);
