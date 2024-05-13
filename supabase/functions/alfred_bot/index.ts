@@ -142,7 +142,7 @@ try {
 
   Deno.serve(async (req: Request) => {
     console.debug(`${req.method} ${req.url}`);
-    console.debug(`${JSON.stringify(req.headers)}`);
+    console.debug(`${JSON.stringify(req.headers)}`); // need to log request headers for some reason
     const url = new URL(req.url);
 
     if (req.method === "GET" && url.pathname === "/alfred_bot/ping") {
