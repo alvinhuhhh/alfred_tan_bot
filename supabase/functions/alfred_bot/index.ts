@@ -2,7 +2,7 @@ import {
   Bot,
   webhookCallback,
   Context,
-} from "https://deno.land/x/grammy@v1.23.0/mod.ts";
+} from "https://deno.land/x/grammy@v1.36.0/mod.ts";
 
 import ChatsService from "./service/chats.service.ts";
 import DinnersService from "./service/dinners.service.ts";

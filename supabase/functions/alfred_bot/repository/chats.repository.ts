@@ -9,8 +9,7 @@ export default class ChatsRepository {
     if (!query.data)
       throw new Error(`[getChatById] chat does not exist for id: ${id}`);
 
-    const queryData: Chat = query.data[0] as Chat;
-    return queryData;
+    return query.data[0] as Chat;
   }
 
   public static async insertChat(chat: Chat): Promise<Chat> {
@@ -28,8 +27,7 @@ export default class ChatsRepository {
       .select();
     if (result.error) throw result.error;
 
-    const queryData: Chat = result.data[0] as Chat;
-    return queryData;
+    return result.data[0] as Chat;
   }
 
   public static async updateChat(chat: Chat): Promise<Chat> {
@@ -46,8 +44,7 @@ export default class ChatsRepository {
       .select();
     if (result.error) throw result.error;
 
-    const queryData: Chat = result.data[0] as Chat;
-    return queryData;
+    return result.data[0] as Chat;
   }
 
   public static async deleteChat(id: number): Promise<boolean> {

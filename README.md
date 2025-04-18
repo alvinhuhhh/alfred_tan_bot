@@ -10,23 +10,15 @@ Alfred is a Telegram bot that handles repetitive administrative duties for famil
 
 - Dinner attendance - automated!
 
-- Car usage management
-
-- Remembering the CDC voucher link
-
-- Remembering the WIFI password
+- Remembering common family secrets (CDC voucher links, wifi passwords etc.)
 
 ## Roadmap
 
 :white_check_mark: Dinner attendance
 
-:white_check_mark: Remembering CDC Voucher links
+:white_check_mark: Remembering secrets
 
-:white_check_mark: Remembering WIFI passwords
-
-:construction: Car usage management
-
-:construction: Dinner attendance cron schedule setting
+:construction: Automated family dinner attendance
 
 :construction: Family calendar for events and celebrations
 
